@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "954347661292",
+    "project_id": "ocandroidp15missionbeventorias",
+    "storage_bucket": "ocandroidp15missionbeventorias.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954347661292:android:2b3c3e70f0e381a96f02c9",
+        "android_client_info": {
+          "package_name": "com.example.ocandroidp15missionb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzJpDfAxq0CWL3up-bbCW_pYDu4BDwsHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

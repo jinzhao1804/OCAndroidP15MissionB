@@ -1,0 +1,47 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+
+# Android Studio
+.idea/
+*.iml
+.gradle/
+build/
+
+# Fichiers générés par Gradle
+/local.properties
+/.gradle/
+
+# Fichiers d'APK et autres artefacts
+*.apk
+*.aar
+
+# Fichiers temporaires et caches
+*.log
+*.swp
+out/
+
+# Système de fichiers Mac
+.DS_Store
+
+# Clés de signature
+*.keystore
+
+# Fichiers spécifiques à Android
+.android/
+
+# Fichiers générés par le système
+Thumbs.db
