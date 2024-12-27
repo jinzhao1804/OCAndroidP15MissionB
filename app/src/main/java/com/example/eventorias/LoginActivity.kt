@@ -1,8 +1,6 @@
 package com.example.eventorias
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +16,6 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import com.firebase.ui.auth.AuthMethodPickerLayout
 
 class LoginActivity : ComponentActivity() {
@@ -27,14 +24,18 @@ class LoginActivity : ComponentActivity() {
 
     private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
+            // Successfully signed in
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
-                // Successfully signed in
                 navigateToHome(user)
             }
         } else {
+            // Handle error
             val response = IdpResponse.fromResultIntent(result.data)
-            // Handle error if necessary
+            response?.error?.message?.let {
+                // Display a user-friendly error message
+                Toast.makeText(this, "Error: $it", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -74,25 +75,6 @@ class LoginActivity : ComponentActivity() {
             .build()
 
         signInLauncher.launch(signInIntent)
-        customizeButtons()
-    }
-
-    // After FirebaseUI is launched, customize buttons programmatically
-    private fun customizeButtons() {
-        // FirebaseUI handles sign-in flow and launches another activity.
-        // You need to wait until FirebaseUI activity has been launched, which will contain the buttons you want to customize.
-
-        val googleButton: Button? = findViewById(R.id.GoogleButton)
-        val emailButton: Button? = findViewById(R.id.emailButton)
-
-        // Check if buttons are found and then set their background color
-        googleButton?.let {
-            it.setBackgroundColor(ContextCompat.getColor(this, R.color.white)) // Set red background for Google button
-        }
-
-        emailButton?.let {
-            it.setBackgroundColor(ContextCompat.getColor(this, R.color.red)) // Set white background for email button
-        }
     }
 
     private fun navigateToHome(user: FirebaseUser) {
