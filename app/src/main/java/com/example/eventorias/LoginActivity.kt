@@ -1,6 +1,7 @@
 package com.example.eventorias
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 
 class LoginActivity : ComponentActivity() {
 
+    private lateinit var auth: FirebaseAuth
+
     private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val user = FirebaseAuth.getInstance().currentUser
@@ -33,6 +36,8 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+
         setContent {
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
@@ -52,26 +57,31 @@ class LoginActivity : ComponentActivity() {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
+            .setLogo(R.drawable.logo)  // Replace with your logo's resource ID
+            .setTheme(R.style.FirebaseAuthCustomTheme)  // Apply the custom theme for centering
             .build()
 
         signInLauncher.launch(signInIntent)
     }
 
     private fun navigateToHome(user: FirebaseUser) {
-        // Navigate to home screen using Compose
         setContent {
-            HomeScreen(user = user)
+            HomeScreen(user = user, onSignOut = { signOut() })
         }
+    }
+
+    private fun signOut() {
+        AuthUI.getInstance()
+            .signOut(this)
+        startSignInFlow()
     }
 }
 
 @Composable
-fun HomeScreen(user: FirebaseUser) {
+fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = "Hi ${user.displayName ?: "User"}")
-        Button(onClick = {
-            FirebaseAuth.getInstance().signOut()
-        }) {
+        Button(onClick = onSignOut) {
             Text(text = "Sign Out")
         }
     }

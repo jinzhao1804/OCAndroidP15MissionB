@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FirebaseAuthCustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Center the UI components -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:gravity">center</item>
+        <!-- Customize background color if needed -->
+        <item name="android:background">@android:color/white</item>
+    </style>
+</resources>
