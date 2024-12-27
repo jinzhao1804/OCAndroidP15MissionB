@@ -1,21 +1,16 @@
-package com.example.eventorias
+package com.example.eventorias.ui.login
 
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button as ComposeButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.eventorias.R
+import com.example.eventorias.ui.eventList.HomeScreen
 import com.firebase.ui.auth.AuthMethodPickerLayout
 
 class LoginActivity : ComponentActivity() {
@@ -90,12 +85,3 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Hi ${user.displayName ?: "User"}")
-        ComposeButton(onClick = onSignOut) {
-            Text(text = "Sign Out")
-        }
-    }
-}
