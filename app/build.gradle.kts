@@ -52,6 +52,8 @@ android {
 
 dependencies {
 
+    implementation ("com.google.accompanist:accompanist-permissions:0.34.0")
+
     implementation("androidx.navigation:navigation-compose:2.8.5")
 
 
@@ -82,6 +84,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

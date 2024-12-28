@@ -1,11 +1,9 @@
 package com.example.eventorias.ui.eventList
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,19 +13,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
 import com.google.firebase.auth.FirebaseUser
+import com.example.eventorias.ui.addEvent.CreateEventActivity
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
+fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -> Unit) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -37,7 +37,8 @@ fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
             )
         },
         bottomBar = {
-            Box (modifier = Modifier.fillMaxWidth()
+            Box (modifier = Modifier
+                .fillMaxWidth()
                 .background(dark)
                 .wrapContentSize(Alignment.Center),
                 contentAlignment = Alignment.Center
@@ -54,7 +55,10 @@ fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* Handle click here */ },
+                onClick = {
+                    val intent = Intent(navController.context, CreateEventActivity::class.java)
+                    navController.context.startActivity(intent)
+                },
                 content = { Text("+") }
             )
         },
@@ -66,6 +70,9 @@ fun HomeScreen(user: FirebaseUser, onSignOut: () -> Unit) {
                 }
                 composable("profile") {
                     ProfileScreen(user)
+                }
+                composable("createEvent") {
+                    CreateEventActivity().CreateEventScreen()
                 }
             }
         }
@@ -90,10 +97,12 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             },
             icon = {
-                Icon(Icons.Filled.List, contentDescription = "Events")
+                Icon(painter = painterResource(id = R.drawable.list), contentDescription = "Events")
             },
             label = { Text("Events") },
-            modifier = Modifier.background(dark).padding(horizontal = 0.dp), // Change background color when selected
+            modifier = Modifier
+                .background(dark)
+                .padding(horizontal = 0.dp), // Change background color when selected
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = Color.White,  // White color for unselected icons
                 selectedIconColor = Color.White,    // White color for selected icons
@@ -112,10 +121,12 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             },
             icon = {
-                Icon(Icons.Filled.Person, contentDescription = "Profile")
+                Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "Profile")
             },
             label = { Text("Profile") },
-            modifier = Modifier.background(dark).padding(horizontal = 0.dp),
+            modifier = Modifier
+                .background(dark)
+                .padding(horizontal = 0.dp),
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = Color.White,  // White color for unselected icons
                 selectedIconColor = Color.White,    // White color for selected icons

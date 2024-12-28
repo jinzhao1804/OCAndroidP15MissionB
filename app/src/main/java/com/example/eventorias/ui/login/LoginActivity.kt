@@ -9,6 +9,8 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
 import com.example.eventorias.ui.eventList.HomeScreen
 import com.firebase.ui.auth.AuthMethodPickerLayout
@@ -16,6 +18,7 @@ import com.firebase.ui.auth.AuthMethodPickerLayout
 class LoginActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private val navController = NavController
 
     private val signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -74,9 +77,13 @@ class LoginActivity : ComponentActivity() {
 
     private fun navigateToHome(user: FirebaseUser) {
         setContent {
-            HomeScreen(user = user, onSignOut = { signOut() })
+            val navController = rememberNavController() // Create the NavController inside Composable
+
+            // Pass user and navController to HomeScreen composable
+            HomeScreen(navController = navController, user = user, onSignOut = { signOut() })
         }
     }
+
 
     private fun signOut() {
         AuthUI.getInstance()
