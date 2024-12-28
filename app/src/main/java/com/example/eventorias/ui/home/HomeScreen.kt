@@ -1,4 +1,4 @@
-package com.example.eventorias.ui.eventList
+package com.example.eventorias.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -22,13 +23,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
 import com.google.firebase.auth.FirebaseUser
-import com.example.eventorias.ui.addEvent.CreateEventActivity
+import com.example.eventorias.ui.add.CreateEventActivity
+import com.example.eventorias.ui.list.EventListScreen
+import com.example.eventorias.ui.profile.UserProfileScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -> Unit) {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {/*
@@ -70,7 +73,8 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
                     EventListScreen()
                 }
                 composable("profile") {
-                    ProfileScreen(user)
+                    //ProfileScreen(user)
+                    UserProfileScreen(context = context)
                 }
                 composable("createEvent") {
                     CreateEventActivity().CreateEventScreen()
@@ -135,30 +139,5 @@ fun BottomNavigationBar(navController: NavController) {
                 selectedTextColor = Color.White     // White color for selected text
             )
         )
-    }
-}
-
-
-
-/*
-@Composable
-fun EventListScreen(user: FirebaseUser, onSignOut: () -> Unit) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Spacer(modifier = Modifier.height(100.dp))
-        Text(text = "Hi ${user.displayName ?: "User"}")
-        Button(onClick = onSignOut) {
-            Text(text = "Sign Out")
-        }
-        // Add Event List content here
-    }
-
-}
-*/
-@Composable
-fun ProfileScreen(user: FirebaseUser) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Spacer(modifier = Modifier.height(100.dp)) // Adding space between Text and Button
-        Text(text = "Profile of ${user.displayName ?: "User"}")
-        // Add Profile content here
     }
 }

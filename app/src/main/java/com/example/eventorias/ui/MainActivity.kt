@@ -8,9 +8,9 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.eventorias.ui.eventList.HomeScreen
+import com.example.eventorias.ui.home.HomeScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
-import com.example.eventorias.ui.addEvent.CreateEventActivity
+import com.example.eventorias.ui.add.CreateEventActivity
 import com.firebase.ui.auth.AuthUI
 
 class MainActivity : ComponentActivity() {

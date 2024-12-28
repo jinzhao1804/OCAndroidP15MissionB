@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
-import com.example.eventorias.ui.eventList.HomeScreen
+import com.example.eventorias.ui.home.HomeScreen
 import com.firebase.ui.auth.AuthMethodPickerLayout
 
 class LoginActivity : ComponentActivity() {

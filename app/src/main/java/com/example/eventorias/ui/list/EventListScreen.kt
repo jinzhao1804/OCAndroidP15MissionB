@@ -1,15 +1,11 @@
-package com.example.eventorias.ui.eventList
+package com.example.eventorias.ui.list
 
 import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -27,7 +23,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.eventorias.data.Event
-import com.example.eventorias.ui.addEvent.CreateEventActivity
+import com.example.eventorias.ui.add.CreateEventActivity
+import com.example.eventorias.ui.detail.EventDetailActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.ParseException
 import java.text.SimpleDateFormat
