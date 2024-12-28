@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -310,12 +311,16 @@ class CreateEventActivity : ComponentActivity() {
         }
 
 
-        imageUri?.let { uri ->
-            uploadImageToFirebase(uri) { downloadUrl ->
-                saveEvent(title, date, time, address, description, downloadUrl)
+        // Get coordinates from the provided address
+        getCoordinatesFromAddress(address) { latitude, longitude ->
+            // Once coordinates are retrieved, save the event data
+            imageUri?.let { uri ->
+                uploadImageToFirebase(uri) { downloadUrl ->
+                    saveEvent(title, date, time, address, description, latitude, longitude, downloadUrl)
+                }
+            } ?: run {
+                Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
             }
-        } ?: run {
-            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -334,7 +339,10 @@ class CreateEventActivity : ComponentActivity() {
             }
     }
 
-    private fun saveEvent(title: String, date: String, time: String, address: String, description: String, imageUrl: String) {
+    private fun saveEvent(
+        title: String, date: String, time: String, address: String, description: String,
+        latitude: Double, longitude: Double, imageUrl: String
+    ) {
         val firestore = FirebaseFirestore.getInstance()
         val newEventDocument = firestore.collection("events")
 
@@ -345,8 +353,8 @@ class CreateEventActivity : ComponentActivity() {
             "address" to address,
             "description" to description,
             "imageUrl" to imageUrl,
-            "latitude" to 0.0,
-            "longitude" to 0.0
+            "latitude" to latitude,
+            "longitude" to longitude
         )
 
         newEventDocument.add(event)
@@ -369,5 +377,24 @@ class CreateEventActivity : ComponentActivity() {
     private fun takePicture() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraLauncher.launch(takePictureIntent)
+    }
+
+    private fun getCoordinatesFromAddress(address: String, callback: (Double, Double) -> Unit) {
+        val geocoder = Geocoder(this, Locale.getDefault())
+        try {
+            val addressList = geocoder.getFromLocationName(address, 1)
+            if (addressList?.isNotEmpty() == true) {
+                val location = addressList[0]
+                val latitude = location.latitude
+                val longitude = location.longitude
+                Log.d("CreateEventActivity", "Coordinates: $latitude, $longitude")
+                callback(latitude, longitude)
+            } else {
+                Toast.makeText(this, "No address found", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("CreateEventActivity", "Geocoding error: ${e.message}")
+            Toast.makeText(this, "Geocoding error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
