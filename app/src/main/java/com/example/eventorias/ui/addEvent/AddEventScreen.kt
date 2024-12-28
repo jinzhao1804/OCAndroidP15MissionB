@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +20,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -29,9 +30,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateEventActivity : ComponentActivity() {
@@ -66,11 +69,8 @@ class CreateEventActivity : ComponentActivity() {
     }
 
     private fun initializeLaunchers() {
-
         Log.e("CreateEventActivity", "Initializing launchers")
 
-
-        // Initialize permissions request launcher
         requestPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val allGranted = permissions.all { it.value }
             if (allGranted) {
@@ -79,7 +79,7 @@ class CreateEventActivity : ComponentActivity() {
                 Toast.makeText(this, "Some permissions are denied", Toast.LENGTH_SHORT).show()
             }
         }
-        // Initialize the gallery launcher
+
         galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val imageUri = result.data?.data
@@ -89,7 +89,6 @@ class CreateEventActivity : ComponentActivity() {
             }
         }
 
-        // Initialize the camera launcher
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val imageUri = result.data?.data
@@ -99,8 +98,6 @@ class CreateEventActivity : ComponentActivity() {
             }
         }
         Log.e("CreateEventActivity", "Launchers initialized")
-
-
     }
 
     private fun handleImageUri(uri: Uri) {
@@ -135,33 +132,11 @@ class CreateEventActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextField(
-                value = date,
-                onValueChange = { date = it },
-                label = { Text("Event Date") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = { showDatePicker() }) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Select Date")
-                    }
-                }
-            )
+            DateInputField(date = date, onDateChange = { date = it })  // Pass date and onDateChange here
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextField(
-                value = time,
-                onValueChange = { time = it },
-                label = { Text("Event Time") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = { showTimePicker() }) {
-                        Icon(Icons.Default.Info, contentDescription = "Select Time")
-                    }
-                }
-            )
+            TimeInputField(time = time, onTimeChange = { time = it })  // Pass time and onTimeChange here
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -204,32 +179,136 @@ class CreateEventActivity : ComponentActivity() {
         }
     }
 
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+    @Composable
+    fun DateInputField(date: String, onDateChange: (String) -> Unit) {
+        var showDialog by remember { mutableStateOf(false) }
 
-        DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-            // Update date state in the Compose UI
-        }, year, month, day).show()
+        // Handle Date Picker dialog visibility
+        if (showDialog) {
+            DatePickerDialog(onDateSelected = { selectedDate ->
+                onDateChange(selectedDate)  // Use onDateChange to update the date state
+                showDialog = false // Close dialog after selection
+            })
+        }
+
+        TextField(
+            value = date,
+            onValueChange = { onDateChange(it) },
+            label = { Text("Event Date") },
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = {
+                    showDialog = true // Show the Date Picker dialog when clicked
+                }) {
+                    Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+                }
+            }
+        )
     }
 
-    private fun showTimePicker() {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
+    @Composable
+    fun DatePickerDialog(onDateSelected: (String) -> Unit) {
+        val context = LocalContext.current
 
-        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
-            // Update time state in the Compose UI
-        }, hour, minute, true).show()
+        // Create DatePickerDialog with a default date
+        val datePickerDialog = remember {
+            DatePickerDialog(
+                context,
+                { _, year, monthOfYear, dayOfMonth ->
+                    // Format the selected date as "dd/MM/yyyy"
+                    val selectedDate = String.format("%02d/%02d/%04d", dayOfMonth, monthOfYear + 1, year)
+                    onDateSelected(selectedDate)
+                },
+                2024,  // Default year
+                0,     // Default month (January)
+                1      // Default day of the month
+            )
+        }
+
+        LaunchedEffect(datePickerDialog) {
+            datePickerDialog.show()
+        }
     }
+
+    @Composable
+    fun TimeInputField(time: String, onTimeChange: (String) -> Unit) {
+        var showDialog by remember { mutableStateOf(false) }
+
+        // Handle Time Picker dialog visibility
+        if (showDialog) {
+            TimePickerDialog(onTimeSelected = { selectedTime ->
+                onTimeChange(selectedTime)  // Use onTimeChange to update the time state
+                showDialog = false // Close dialog after selection
+            })
+        }
+
+        TextField(
+            value = time,
+            onValueChange = { onTimeChange(it) },
+            label = { Text("Event Time") },
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = {
+                    showDialog = true // Show the Time Picker dialog when clicked
+                }) {
+                    Icon(Icons.Default.Edit, contentDescription = "Select Time")
+                }
+            }
+        )
+    }
+
+    @Composable
+    fun TimePickerDialog(onTimeSelected: (String) -> Unit) {
+        val context = LocalContext.current
+
+        val timePickerDialog = remember {
+            TimePickerDialog(
+                context,
+                { _, hourOfDay, minute ->
+                    val selectedTime = String.format("%02d:%02d", hourOfDay, minute)
+                    onTimeSelected(selectedTime)
+                },
+                12, // Default hour
+                0,  // Default minute
+                true // Use 24-hour format
+            )
+        }
+
+        LaunchedEffect(timePickerDialog) {
+            timePickerDialog.show()
+        }
+    }
+
+
 
     private fun onSaveEvent(title: String, date: String, time: String, address: String, description: String) {
-        if (title.isEmpty() || date.isEmpty() || time.isEmpty() || address.isEmpty() || description.isEmpty()) {
+        /*if (title.isEmpty() || date.isEmpty() || time.isEmpty() || address.isEmpty() || description.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             return
+        }*/
+        if(date.isEmpty()){
+            Toast.makeText(this, "Please fill date fields", Toast.LENGTH_SHORT).show()
+
         }
+        if(time.isEmpty()){
+            Toast.makeText(this, "Please fill time fields", Toast.LENGTH_SHORT).show()
+
+        }
+        if(title.isEmpty()){
+            Toast.makeText(this, "Please fill title fields", Toast.LENGTH_SHORT).show()
+
+        }
+        if(address.isEmpty()){
+            Toast.makeText(this, "Please fill address fields", Toast.LENGTH_SHORT).show()
+
+        }
+        if(description.isEmpty()){
+            Toast.makeText(this, "Please fill description fields", Toast.LENGTH_SHORT).show()
+
+        }
+
 
         imageUri?.let { uri ->
             uploadImageToFirebase(uri) { downloadUrl ->
@@ -292,4 +371,3 @@ class CreateEventActivity : ComponentActivity() {
         cameraLauncher.launch(takePictureIntent)
     }
 }
-
