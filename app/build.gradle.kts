@@ -52,6 +52,9 @@ android {
 
 dependencies {
 
+
+    implementation ("io.coil-kt:coil-compose:2.6.0")
+
     implementation ("com.google.accompanist:accompanist-permissions:0.34.0")
 
     implementation("androidx.navigation:navigation-compose:2.8.5")

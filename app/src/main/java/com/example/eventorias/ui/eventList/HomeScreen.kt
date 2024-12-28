@@ -31,10 +31,10 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
     val navController = rememberNavController()
 
     Scaffold(
-        topBar = {
+        topBar = {/*
             TopAppBar(
                 title = { Text(text = "Eventorias") }  // Dynamic title can be added if needed
-            )
+            )*/
         },
         bottomBar = {
             Box (modifier = Modifier
@@ -66,7 +66,8 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
         content = {
             NavHost(navController = navController, startDestination = "events") {
                 composable("events") {
-                    EventListScreen(user, onSignOut)
+                   // EventListScreen(user, onSignOut)
+                    EventListScreen()
                 }
                 composable("profile") {
                     ProfileScreen(user)
@@ -139,6 +140,7 @@ fun BottomNavigationBar(navController: NavController) {
 
 
 
+/*
 @Composable
 fun EventListScreen(user: FirebaseUser, onSignOut: () -> Unit) {
     Column(modifier = Modifier.padding(16.dp)) {
@@ -149,8 +151,9 @@ fun EventListScreen(user: FirebaseUser, onSignOut: () -> Unit) {
         }
         // Add Event List content here
     }
-}
 
+}
+*/
 @Composable
 fun ProfileScreen(user: FirebaseUser) {
     Column(modifier = Modifier.padding(16.dp)) {
