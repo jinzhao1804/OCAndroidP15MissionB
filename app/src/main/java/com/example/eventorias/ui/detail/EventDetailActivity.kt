@@ -130,7 +130,7 @@ fun getCoordinatesFromAddress(address: String): Pair<Double, Double>? {
 
 @Composable
 fun loadMapImage(latitude: Double, longitude: Double) {
-    val apiKey = "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI" // Replace with your API key
+    val apiKey = "api" // Replace with your API key
     val mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=400x400&key=$apiKey"
 
     Image(
