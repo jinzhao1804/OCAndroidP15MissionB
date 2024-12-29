@@ -32,7 +32,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import java.util.*
 
 class CreateEventActivity : ComponentActivity() {
@@ -356,11 +366,53 @@ class CreateEventActivity : ComponentActivity() {
 
         newEventDocument.add(event)
             .addOnSuccessListener {
+                sendMessageToTopic(title, "all")
                 Toast.makeText(this, "Event created successfully", Toast.LENGTH_SHORT).show()
+                finish()
+
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error creating event: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+    private fun sendMessageToTopic(message: String, topic: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val client = OkHttpClient()
+                val jsonObject = JSONObject().apply {
+                    put("message", message)
+                    put("topic", topic)
+                }
+
+                Log.d("remoteMessage", "Sending message to topic: $topic")
+
+                val requestBody = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
+                val request = Request.Builder()
+                    .url("https://us-central1-p15eventorias.cloudfunctions.net/sendNotificationToTopic")
+                   // .addHeader("Authorization", "Bearer $identityToken")  // Adding the Authorization header
+                    .post(requestBody)
+                    .build()
+
+                Log.d("remoteMessage", "Request: $request")
+                val response = client.newCall(request).execute()
+                Log.d("remoteMessage", "Response: ${response.message}")
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body?.string()
+                        Log.d("remoteMessage", "Message sent successfully: $responseBody")
+                    } else {
+                        val errorBody = response.body?.string()
+                        Log.e("remoteMessage", "Message: $message, Topic: $topic")
+                        Log.e("remoteMessage", "Failed to send message: ${response.message}, Error body: $errorBody")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("remoteMessage", "Exception occurred: ${e.message}")
+                }
+            }
+        }
     }
 
     private fun openImageChooser() {

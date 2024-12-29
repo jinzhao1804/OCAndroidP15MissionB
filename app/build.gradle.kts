@@ -52,6 +52,11 @@ android {
 
 dependencies {
 
+    implementation ("androidx.work:work-runtime:2.10.0")
+
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.google.firebase:firebase-messaging:24.1.0")
+
 
     implementation ("io.coil-kt:coil-compose:2.6.0")
 
@@ -88,6 +93,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

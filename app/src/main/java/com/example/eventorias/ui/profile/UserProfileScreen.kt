@@ -12,11 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.eventorias.MyFirebaseMessagingService
 import com.example.eventorias.R
 import com.example.eventorias.data.User
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
 @Composable
 fun UserProfileScreen(context: Context) {
@@ -92,6 +94,16 @@ fun UserProfileScreen(context: Context) {
                 userDocRef.update("receive_notifications", isChecked)
                     .addOnSuccessListener {
                         notificationsEnabled = isChecked
+                        if(isChecked == true){
+                            FirebaseMessaging.getInstance().subscribeToTopic("all")
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        println("Successfully subscribed to 'all' topic.")
+                                    } else {
+                                        println("Failed to subscribe to 'all' topic.")
+                                    }
+                                }
+                        }
                     }
                     .addOnFailureListener { e ->
                         Log.e("UserProfileScreen", "Error updating notifications setting", e)

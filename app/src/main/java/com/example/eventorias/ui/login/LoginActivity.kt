@@ -1,6 +1,7 @@
 package com.example.eventorias.ui.login
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
 import com.example.eventorias.ui.home.HomeScreen
 import com.firebase.ui.auth.AuthMethodPickerLayout
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginActivity : ComponentActivity() {
 
@@ -45,10 +48,13 @@ class LoginActivity : ComponentActivity() {
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
                 navigateToHome(user)
+                getNewFCMToken()
             } else {
                 startSignInFlow()
             }
         }
+
+
     }
 
     private fun startSignInFlow() {
@@ -90,5 +96,34 @@ class LoginActivity : ComponentActivity() {
             .signOut(this)
         startSignInFlow()
     }
+
+    private fun getNewFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                // Handle failure to get token
+                return@addOnCompleteListener
+            }
+
+            // Get the new FCM token
+            val newToken = task.result
+            Log.d("FCM", "New token: $newToken")
+            // Save the token to Firestore or your backend
+            saveTokenToFirestore(newToken)
+        }
+    }
+
+    private fun saveTokenToFirestore(token: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+
+        userRef.update("fcmToken", token)
+            .addOnSuccessListener {
+                Log.d("FCM", "Token saved successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FCM", "Error saving token", e)
+            }
+    }
 }
+
 
