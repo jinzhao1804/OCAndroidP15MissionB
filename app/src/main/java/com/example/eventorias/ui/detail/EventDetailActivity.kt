@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.example.eventorias.api.ApiKey
 import com.example.eventorias.data.Event
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
@@ -130,7 +131,9 @@ fun getCoordinatesFromAddress(address: String): Pair<Double, Double>? {
 
 @Composable
 fun loadMapImage(latitude: Double, longitude: Double) {
-    val apiKey = "api" // Replace with your API key
+    //val apiKey = System.getenv("API_KEY")
+    val apiKey = ApiKey.API_KEY
+
     val mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=400x400&key=$apiKey"
 
     Image(

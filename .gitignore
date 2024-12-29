@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+.env
+config.js
+**/ApiKey.kt
