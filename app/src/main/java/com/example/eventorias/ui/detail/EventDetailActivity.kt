@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.detail
 
+import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +16,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.example.eventorias.BuildConfig
 import com.example.eventorias.api.ApiKey
 import com.example.eventorias.data.Event
 import com.google.firebase.firestore.FirebaseFirestore
+import io.github.cdimascio.dotenv.Dotenv
+import io.github.cdimascio.dotenv.dotenv
+import java.io.InputStreamReader
 import java.util.*
 
 class EventDetailActivity : ComponentActivity() {
@@ -129,9 +134,15 @@ fun getCoordinatesFromAddress(address: String): Pair<Double, Double>? {
     }
 }
 
+
 @Composable
 fun loadMapImage(latitude: Double, longitude: Double) {
     //val apiKey = System.getenv("API_KEY")
+
+    //val dotenv = Dotenv.configure().load()
+    //val apiKey = BuildConfig.API_KEY
+
+    //val apiKey: String? = dotenv["API_KEY"]
     val apiKey = ApiKey.API_KEY
 
     val mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=400x400&key=$apiKey"

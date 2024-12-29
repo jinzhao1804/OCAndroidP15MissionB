@@ -1,8 +1,11 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
 }
+
 
 android {
     namespace = "com.example.eventorias"
@@ -39,6 +42,8 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true  // Enable BuildConfig fields
+
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -48,9 +53,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildTypes {
+        debug {
+
+          //  buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
+        }
+        release {
+           //  buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
+        }
+    }
 }
 
 dependencies {
+
+    implementation ("io.github.cdimascio:dotenv-kotlin:6.4.0")
 
     implementation ("androidx.work:work-runtime:2.10.0")
 
