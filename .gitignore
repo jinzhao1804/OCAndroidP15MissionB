@@ -16,3 +16,4 @@ local.properties
 .env
 config.js
 **/ApiKey.kt
+/app/src/main/java/com/example/eventorias/api/ApiKey.kt
