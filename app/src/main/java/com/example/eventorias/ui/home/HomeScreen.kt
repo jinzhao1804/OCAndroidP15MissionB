@@ -27,6 +27,7 @@ import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
 import com.google.firebase.auth.FirebaseUser
 import com.example.eventorias.ui.add.CreateEventActivity
+import com.example.eventorias.ui.detail.EventDetailScreen
 import com.example.eventorias.ui.list.EventListScreen
 import com.example.eventorias.ui.profile.UserProfileScreen
 
@@ -80,7 +81,7 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
             NavHost(navController = navController, startDestination = "events") {
                 composable("events") {
                    // EventListScreen(user, onSignOut)
-                    EventListScreen()
+                    EventListScreen(navController)
                 }
                 composable("profile") {
                     //ProfileScreen(user)
@@ -88,6 +89,14 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
                 }
                 composable("createEvent") {
                     CreateEventActivity().CreateEventScreen()
+                }
+                composable("detail/{eventId}") { backStackEntry ->
+                    // Retrieve the eventId from the back stack entry
+                    val eventId = backStackEntry.arguments?.getString("eventId")
+                    if (eventId != null) {
+                        // Pass the eventId to EventDetailScreen
+                        EventDetailScreen(eventId = eventId, navController = navController)
+                    }
                 }
             }
         }

@@ -5,16 +5,22 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.eventorias.BuildConfig
 import com.example.eventorias.api.ApiKey
@@ -31,14 +37,28 @@ class EventDetailActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get the event ID from the intent
+        val eventId = intent.getStringExtra("EVENT_ID") ?: ""
+
+        // Set the content of the activity
         setContent {
-            EventDetailScreen(eventId = intent.getStringExtra("EVENT_ID") ?: "")
+            // Create a NavController for navigation
+            val navController = rememberNavController()
+
+            // Pass Firestore and NavController to the EventDetailScreen
+            EventDetailScreen(
+                eventId = eventId,
+                navController = navController
+            )
         }
     }
 }
 
+
+
 @Composable
-fun EventDetailScreen(eventId: String) {
+fun EventDetailScreen(eventId: String, navController: NavController) {
     val firestore = FirebaseFirestore.getInstance()
     val event = remember { mutableStateOf<Event?>(null) }
 
@@ -48,10 +68,14 @@ fun EventDetailScreen(eventId: String) {
     }
 
     // Render event details
-    event.value?.let {
-        EventDetailUI(event = it)
+    event.value?.let { eventData ->
+        EventDetailUI(
+            event = eventData,
+            onBackPressed = { navController.popBackStack() } // Handle back navigation
+        )
     }
 }
+
 
 private fun fetchEventDetails(
     firestore: FirebaseFirestore,
@@ -73,45 +97,73 @@ private fun fetchEventDetails(
 }
 
 @Composable
-fun EventDetailUI(event: Event) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+fun EventDetailUI(event: Event, onBackPressed: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        event.imageUrl?.let {
-            Image(
-                painter = rememberImagePainter(it),
-                contentDescription = "Event Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(bottom = 16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Add a spacer to make space for the title and back arrow
+            Spacer(modifier = Modifier.height(56.dp))
+
+            event.imageUrl?.let {
+                Image(
+                    painter = rememberImagePainter(it),
+                    contentDescription = "Event Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(bottom = 16.dp)
+                )
+            }
+
+            BasicText(text = event.date, style = MaterialTheme.typography.bodyMedium)
+            BasicText(text = event.time, style = MaterialTheme.typography.bodyMedium)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            BasicText(
+                text = event.description,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            BasicText(text = event.address, style = MaterialTheme.typography.bodyMedium)
+
+            // Load map based on address
+            event.address?.let { address ->
+                val coordinates = getCoordinatesFromAddress(address)
+                coordinates?.let { (latitude, longitude) ->
+                    loadMapImage(latitude, longitude)
+                }
+            }
         }
 
-        BasicText(text = event.date, style = MaterialTheme.typography.bodyMedium)
-        BasicText(text = event.time, style = MaterialTheme.typography.bodyMedium)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        BasicText(
-            text = event.description,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        BasicText(text = event.address, style = MaterialTheme.typography.bodyMedium)
-
-        // Load map based on address
-        event.address?.let { address ->
-            val coordinates = getCoordinatesFromAddress(address)
-            coordinates?.let { (latitude, longitude) ->
-                loadMapImage(latitude, longitude)
+        // Back arrow and title
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackPressed) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back"
+                )
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = event.title,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -137,12 +189,7 @@ fun getCoordinatesFromAddress(address: String): Pair<Double, Double>? {
 
 @Composable
 fun loadMapImage(latitude: Double, longitude: Double) {
-    //val apiKey = System.getenv("API_KEY")
 
-    //val dotenv = Dotenv.configure().load()
-    //val apiKey = BuildConfig.API_KEY
-
-    //val apiKey: String? = dotenv["API_KEY"]
     val apiKey = ApiKey.API_KEY
 
     val mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=400x400&key=$apiKey"

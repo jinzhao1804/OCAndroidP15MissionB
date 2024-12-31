@@ -39,6 +39,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.eventorias.R
 import com.example.eventorias.R.color
@@ -54,14 +55,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun EventListScreen() {
+fun EventListScreen(navController: NavController) {
     var events by remember { mutableStateOf<List<Event>>(emptyList()) }
     var filteredEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var isSortedDescending by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
-
     val firestore = FirebaseFirestore.getInstance()
 
     // Listen to Firestore for updates
@@ -83,12 +83,10 @@ fun EventListScreen() {
                     val date = document.getString("date") ?: ""
                     val time = document.getString("time") ?: ""
                     val address = document.getString("address") ?: ""
-                    // Assuming 'user' is a DocumentReference field in Firestore
                     val userRef = document.getDocumentReference("user")
 
                     // Fetch the user data from Firestore asynchronously
                     val userSnapshot = userRef?.get()?.result
-
                     val user = userSnapshot?.toObject(User::class.java) ?: User()
 
                     Event(id, title, description, imageUrl, latitude, longitude, date, time, address, user)
@@ -112,18 +110,16 @@ fun EventListScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
-                        ,
+                    .padding(start = 16.dp, end = 16.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
 
                 Text(
                     text = "Event list",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White // Set text color to white
                 )
-
 
                 // Search Bar
                 SearchBar(searchText) { text ->
@@ -138,25 +134,13 @@ fun EventListScreen() {
                 }
             }
 
-            //Spacer(modifier = Modifier.height(16.dp))
-
             // Event List
             EventList(events = filteredEvents) { event ->
-                val context = context
-                val intent = Intent(context, EventDetailActivity::class.java).apply {
-                    putExtra("EVENT_ID", event.id)
-                    putExtra("EVENT_TITLE", event.title)
-                    putExtra("EVENT_DESCRIPTION", event.description)
-                    putExtra("EVENT_IMAGE_URL", event.imageUrl)
-                    putExtra("EVENT_LATITUDE", event.latitude)
-                    putExtra("EVENT_LONGITUDE", event.longitude)
-                }
-                context.startActivity(intent)
+                // Navigate to the EventDetailScreen
+                navController.navigate("detail/${event.id}")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-
         }
     }
 }
