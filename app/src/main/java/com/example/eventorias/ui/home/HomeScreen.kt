@@ -94,7 +94,7 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
                     UserProfileScreen(context = context)
                 }
                 composable("createEvent") {
-                    CreateEventActivity().CreateEventScreen()
+                    CreateEventActivity().CreateEventScreen(context)
                 }
                 composable("detail/{eventId}") { backStackEntry ->
                     // Retrieve the eventId from the back stack entry

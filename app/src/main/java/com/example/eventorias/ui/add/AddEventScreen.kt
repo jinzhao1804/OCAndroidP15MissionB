@@ -3,6 +3,7 @@ package com.example.eventorias.ui.add
 import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.location.Geocoder
 import android.net.Uri
@@ -17,20 +18,32 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.eventorias.R
+import com.example.eventorias.ui.theme.app_white
+import com.example.eventorias.ui.theme.dark
+import com.example.eventorias.ui.theme.red
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
@@ -58,7 +71,7 @@ class CreateEventActivity : ComponentActivity() {
         initializeLaunchers()
         checkAndRequestPermissions()
         setContent {
-            CreateEventScreen()
+            CreateEventScreen(context = this) // Pass the activity context
         }
     }
 
@@ -113,76 +126,135 @@ class CreateEventActivity : ComponentActivity() {
         imageUri = uri
     }
 
+
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun CreateEventScreen() {
+    fun CreateEventScreen(context: Context) { // Accept context as a parameter
         var title by remember { mutableStateOf("") }
         var date by remember { mutableStateOf("") }
         var time by remember { mutableStateOf("") }
         var address by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Create Event", style = MaterialTheme.typography.titleSmall)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Event Title") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            DateInputField(date = date, onDateChange = { date = it })  // Pass date and onDateChange here
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TimeInputField(time = time, onTimeChange = { time = it })  // Pass time and onTimeChange here
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextField(
-                value = address,
-                onValueChange = { address = it },
-                label = { Text("Event Address") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Event Description") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(onClick = { openImageChooser() }) {
-                    Icon(Icons.Default.Person, contentDescription = "Select Image from Gallery")
-                }
-
-                IconButton(onClick = { takePicture() }) {
-                    Icon(Icons.Default.Edit, contentDescription = "Take Picture")
-                }
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Creation of an event",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            (context as? ComponentActivity)?.finish()
+                        }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                )
             }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text("Event Title") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-            Button(onClick = { onSaveEvent(title, date, time, address, description) }) {
-                Text("Save Event")
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    TextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text("Event Description") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        DateInputField(
+                            date = date,
+                            onDateChange = { date = it }
+                        )
+
+                        TimeInputField(
+                            time = time,
+                            onTimeChange = { time = it }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    TextField(
+                        value = address,
+                        onValueChange = { address = it },
+                        label = { Text("Enter full Address") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier.width(150.dp)
+                    ) {
+                        Button(
+                            onClick = { takePicture() },
+                            colors = ButtonDefaults.buttonColors(containerColor = app_white) // Set background color to white
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.camera),
+                                contentDescription = "Take Picture",
+                                tint = dark // Set icon color to black
+                            )
+                        }
+
+                        Button(
+                            onClick = { openImageChooser() },
+                            colors = ButtonDefaults.buttonColors(containerColor = red) // Set background color to red
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.file),
+                                contentDescription = "Select Image from Gallery",
+                                tint = app_white // Set icon color to white
+                            )
+                        }
+                    }
+                }
+
+                // Button aligned at the bottom of the screen
+                Button(
+                    onClick = { onSaveEvent(title, date, time, address, description) },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter) // Align at the bottom center
+                        .padding(32.dp) // Add padding for better spacing
+                        .fillMaxWidth() // Make the button take the full width
+                        ,
+                    colors = ButtonDefaults.buttonColors(containerColor = red) // Set background color to red
+
+
+                ) {
+                    Text("Validate")
+                }
             }
         }
     }
@@ -204,7 +276,7 @@ class CreateEventActivity : ComponentActivity() {
             onValueChange = { onDateChange(it) },
             label = { Text("Event Date") },
             readOnly = true,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(fraction = 0.45f),
             trailingIcon = {
                 IconButton(onClick = {
                     showDialog = true // Show the Date Picker dialog when clicked
@@ -213,6 +285,7 @@ class CreateEventActivity : ComponentActivity() {
                 }
             }
         )
+
     }
 
     @Composable
@@ -256,7 +329,7 @@ class CreateEventActivity : ComponentActivity() {
             onValueChange = { onTimeChange(it) },
             label = { Text("Event Time") },
             readOnly = true,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(fraction = 0.90f),
             trailingIcon = {
                 IconButton(onClick = {
                     showDialog = true // Show the Time Picker dialog when clicked
