@@ -18,6 +18,8 @@ config.js
 **/ApiKey.kt
 /app/src/main/java/com/example/eventorias/api/ApiKey.kt
 /app/src/main/java/com/example/eventorias/api
+# Ignore ApiKey.kt
+app/src/main/java/com/example/eventorias/api/ApiKey.kt
 # Ignore the app-level build.gradle file
 /app/build.gradle
 
