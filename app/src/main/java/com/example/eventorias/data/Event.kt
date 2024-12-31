@@ -9,5 +9,6 @@ data class Event(
     val longitude: Double = 0.0,
     val date: String = "",
     val time: String = "",
-    val address: String = ""
+    val address: String = "",
+    val user: User = User()
 )

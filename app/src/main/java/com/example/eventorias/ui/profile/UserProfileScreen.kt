@@ -30,7 +30,7 @@ fun UserProfileScreen(context: Context) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var avatarImage: Painter? by remember { mutableStateOf(null) }
 
-    avatarImage = painterResource(id = R.drawable.profile)  // Update state with the image resource
+    avatarImage = painterResource(id = R.drawable.profile1)  // Update state with the image resource
 
     // Set profile title and update user information if authenticated
     LaunchedEffect(auth.currentUser) {

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -62,9 +65,16 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
                     val intent = Intent(navController.context, CreateEventActivity::class.java)
                     navController.context.startActivity(intent)
                 },
-                content = { Text("+") }
-            )
-        },
+                containerColor = colorResource(id = R.color.red) // Fetch red color from resources
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Event",
+                    tint = colorResource(id = R.color.app_white) // Fetch white color from resources
+                )
+            }
+        }
+        ,
         floatingActionButtonPosition = FabPosition.End,
         content = {
             NavHost(navController = navController, startDestination = "events") {
