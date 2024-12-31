@@ -18,9 +18,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -97,28 +99,41 @@ fun EventListScreen(navController: NavController) {
             }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(dark)
-    ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, bottom = 88.dp)
-            .background(dark)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    val intent = Intent(context, CreateEventActivity::class.java)
+                    context.startActivity(intent)
+                },
+                containerColor = colorResource(id = R.color.red)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Event",
+                    tint = colorResource(id = R.color.app_white)
+                )
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(dark)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.End,
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
                     text = "Event list",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White // Set text color to white
+                    color = Color.White
                 )
 
                 // Search Bar
@@ -136,14 +151,12 @@ fun EventListScreen(navController: NavController) {
 
             // Event List
             EventList(events = filteredEvents) { event ->
-                // Navigate to the EventDetailScreen
                 navController.navigate("detail/${event.id}")
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
 
 
 @Composable

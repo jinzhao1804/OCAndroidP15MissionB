@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
@@ -36,6 +37,8 @@ import com.example.eventorias.ui.profile.UserProfileScreen
 fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -> Unit) {
     val navController = rememberNavController()
     val context = LocalContext.current
+
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold(
         topBar = {/*
@@ -61,22 +64,25 @@ fun HomeScreen(navController: NavController, user: FirebaseUser, onSignOut: () -
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val intent = Intent(navController.context, CreateEventActivity::class.java)
-                    navController.context.startActivity(intent)
-                },
-                containerColor = colorResource(id = R.color.red) // Fetch red color from resources
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Event",
-                    tint = colorResource(id = R.color.app_white) // Fetch white color from resources
-                )
+            // Show FAB only on the EventListScreen
+            if (currentDestination == "events") {
+                FloatingActionButton(
+                    onClick = {
+                        val intent = Intent(context, CreateEventActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    containerColor = colorResource(id = R.color.red)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Event",
+                        tint = colorResource(id = R.color.app_white)
+                    )
+                }
             }
-        }
-        ,
+        },
         floatingActionButtonPosition = FabPosition.End,
+
         content = {
             NavHost(navController = navController, startDestination = "events") {
                 composable("events") {
