@@ -32,7 +32,6 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.example.eventorias.BuildConfig
 import com.example.eventorias.R
-import com.example.eventorias.api.ApiKey
 import com.example.eventorias.data.Event
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
@@ -315,7 +314,8 @@ fun getCoordinatesFromAddress(address: String): Pair<Double, Double>? {
 @Composable
 fun loadMapImage(latitude: Double, longitude: Double) {
 
-    val apiKey = ApiKey.API_KEY
+    val apiKey = BuildConfig.MY_API_KEY
+
 
     val mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=400x400&key=$apiKey"
 

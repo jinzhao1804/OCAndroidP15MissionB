@@ -53,10 +53,14 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    defaultConfig {
+        buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+    }
+
     buildTypes {
         debug {
 
-          //  buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
+           // buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
         }
         release {
            //  buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")

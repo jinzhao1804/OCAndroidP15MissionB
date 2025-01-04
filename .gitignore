@@ -25,3 +25,5 @@ app/src/main/java/com/example/eventorias/api/ApiKey.kt
 
 # Ignore build folders
 /build/
+
+gradle.properties
