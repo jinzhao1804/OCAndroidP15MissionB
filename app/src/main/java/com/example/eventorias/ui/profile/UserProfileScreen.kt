@@ -5,11 +5,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.eventorias.MyFirebaseMessagingService
@@ -67,23 +70,58 @@ fun UserProfileScreen(context: Context) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(32.dp),
+        horizontalAlignment = Alignment.Start
     ) {
-        Text(text = "Profile", style = MaterialTheme.typography.headlineMedium)
 
-        // Use the avatar image if it's set
-        avatarImage?.let {
-            Image(painter = it, contentDescription = "User Avatar", modifier = Modifier.size(100.dp))
-        } ?: run {
-            // Fallback if avatarImage is still null
-            Image(painter = painterResource(id = R.drawable.profile), contentDescription = "Default Avatar", modifier = Modifier.size(100.dp))
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(text = "User profile", style = MaterialTheme.typography.headlineMedium)
+
+            avatarImage?.let {
+                Image(
+                    painter = it,
+                    contentDescription = "User Avatar",
+                    contentScale = ContentScale.Crop, // Crop the image to fit the bounds
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape) // Make the image circular
+                )
+            } ?: run {
+                // Fallback if avatarImage is still null
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "Default Avatar",
+                    contentScale = ContentScale.Crop, // Crop the image to fit the bounds
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape) // Make the image circular
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = userName, style = MaterialTheme.typography.bodyLarge)
-        Text(text = userEmail, style = MaterialTheme.typography.bodyMedium)
+        //Text(text = userName, style = MaterialTheme.typography.bodyLarge)
+        TextField(
+            value = userName,
+            onValueChange = {},
+            label = { Text("Name") },
+            enabled = false,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.padding(8.dp))
+        TextField(
+            value = userEmail,
+            onValueChange = {},
+            label = { Text("Email") },
+            enabled = false,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        //Text(text = userEmail, style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(16.dp))
 
