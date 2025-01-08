@@ -30,8 +30,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
 import com.example.eventorias.ui.theme.EventoriasTheme
-import com.firebase.ui.auth.AuthUI
-import com.example.eventorias.ui.add.CreateEventActivity
+import com.example.eventorias.ui.add.CreateEventScreen
+import com.example.eventorias.ui.add.CreateEventViewModel
 import com.example.eventorias.ui.detail.EventDetailScreen
 import com.example.eventorias.ui.list.EventListScreen
 import com.example.eventorias.ui.login.LoginScreen
@@ -79,8 +79,8 @@ class MainActivity : ComponentActivity() {
                             if (currentDestination == "events") {
                                 FloatingActionButton(
                                     onClick = {
-                                        val intent = Intent(context, CreateEventActivity::class.java)
-                                        context.startActivity(intent)
+                                        // Navigate to the CreateEventScreen route
+                                        navController.navigate("createEvent")
                                     },
                                     containerColor = colorResource(id = R.color.red)
                                 ) {
@@ -112,7 +112,10 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable("createEvent") {
-                                    CreateEventActivity().CreateEventScreen(context)
+                                    CreateEventScreen(
+                                        navController,
+                                        onBackPressed = { navController.popBackStack() }
+                                    )
                                 }
                                 composable("detail/{eventId}") { backStackEntry ->
                                     // Retrieve the eventId from the back stack entry

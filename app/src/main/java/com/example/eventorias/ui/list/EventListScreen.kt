@@ -58,7 +58,6 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.eventorias.R
 import com.example.eventorias.data.Event
-import com.example.eventorias.ui.add.CreateEventActivity
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
 import com.example.eventorias.ui.theme.grey
@@ -87,8 +86,8 @@ fun EventListScreen(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val intent = Intent(context, CreateEventActivity::class.java)
-                    context.startActivity(intent)
+                    // Navigate to the CreateEventScreen route
+                    navController.navigate("createEvent")
                 },
                 containerColor = colorResource(id = R.color.red)
             ) {
