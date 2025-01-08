@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
@@ -49,7 +51,6 @@ fun CreateEventScreen(
             navController.popBackStack() // Navigate back on success
         }
     }
-
 
     // Gallery Launcher
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -301,7 +302,7 @@ fun DatePickerDialog(onDateSelected: (String) -> Unit) {
                 val selectedDate = String.format("%02d/%02d/%04d", dayOfMonth, monthOfYear + 1, year)
                 onDateSelected(selectedDate)
             },
-            2024, 0, 1
+            2025, 0, 1
         )
     }
 

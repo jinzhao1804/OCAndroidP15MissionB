@@ -103,7 +103,7 @@ class CreateEventViewModel : ViewModel() {
         }
     }
 
-    private suspend fun getCoordinatesFromAddress(
+    private fun getCoordinatesFromAddress(
         context: Context,
         address: String
     ): Pair<Double, Double>? {

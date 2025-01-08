@@ -1,8 +1,13 @@
 package com.example.eventorias.ui.profile
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,9 +29,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.eventorias.ui.theme.grey
@@ -39,6 +48,27 @@ fun UserProfileScreen(context: Context, viewModel: UserProfileViewModel = viewMo
     val userEmail by viewModel.userEmail.collectAsState()
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val avatarImage = painterResource(id = R.drawable.profile1)
+
+    var hasNotificationPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                // For devices below Android 13, no need to request this permission
+                true
+            }
+        )
+    }
+
+    // Launcher for requesting permission
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasNotificationPermission = isGranted
+    }
 
     Scaffold(
         containerColor = dark,
@@ -70,6 +100,9 @@ fun UserProfileScreen(context: Context, viewModel: UserProfileViewModel = viewMo
                 notificationsEnabled = notificationsEnabled,
                 onCheckedChange = { isChecked ->
                     viewModel.updateNotificationsSetting(isChecked)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
                 }
             )
 
