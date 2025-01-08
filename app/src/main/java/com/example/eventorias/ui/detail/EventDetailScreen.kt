@@ -100,7 +100,9 @@ fun EventDetailUI(event: Event, mapImageUrl: String?, onBackPressed: () -> Unit,
                         .width(364.dp)
                         .height(354.dp)
                         .padding(bottom = 48.dp)
-                        .align(Alignment.CenterHorizontally) // Align image horizontally center
+                        .align(Alignment.CenterHorizontally), // Align image horizontally center
+                        contentScale = ContentScale.Crop // Crop the image to fill the bounds
+
                 )
             }
 
@@ -224,6 +226,8 @@ fun RoundedImage(painter: Painter, contentDescription: String) {
         contentDescription = contentDescription,
         modifier = Modifier
             .size(60.dp) // Set height and width to 80.dp
-            .clip(RoundedCornerShape(50.dp)) // Crop with rounded corners (adjust radius as needed)
+            .clip(RoundedCornerShape(50.dp)), // Crop with rounded corners (adjust radius as needed)
+            contentScale = ContentScale.Crop // Crop the image to fill the bounds
+
     )
 }

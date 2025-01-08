@@ -401,7 +401,9 @@ fun EventItem(event: Event, onEventClick: (Event) -> Unit) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(180.dp)
-                    .aspectRatio(1f)
+                    .aspectRatio(1f),
+                contentScale = ContentScale.Crop // Crop the image to fill the bounds
+
 
             )
         }
