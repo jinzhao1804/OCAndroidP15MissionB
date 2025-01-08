@@ -3,192 +3,149 @@ package com.example.eventorias.ui.profile
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.eventorias.MyFirebaseMessagingService
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eventorias.R
-import com.example.eventorias.data.User
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.eventorias.ui.theme.grey
-import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserProfileScreen(context: Context) {
-    val auth = FirebaseAuth.getInstance()
-    val firestore = FirebaseFirestore.getInstance()
+fun UserProfileScreen(context: Context, viewModel: UserProfileViewModel = viewModel(), navController: NavController) {
+    // Collect state from ViewModel
+    val userName by viewModel.userName.collectAsState()
+    val userEmail by viewModel.userEmail.collectAsState()
+    val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+    val avatarImage = painterResource(id = R.drawable.profile1)
 
-    var userName by remember { mutableStateOf("John Doe") }
-    var userEmail by remember { mutableStateOf("john.doe@example.com") }
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var avatarImage: Painter? by remember { mutableStateOf(null) }
-
-    avatarImage = painterResource(id = R.drawable.profile1)  // Update state with the image resource
-
-    // Set profile title and update user information if authenticated
-    LaunchedEffect(auth.currentUser) {
-        auth.currentUser?.let { user ->
-            userName = user.displayName ?: "John Doe"
-            userEmail = user.email ?: "john.doe@example.com"
-
-            // Set the avatar image once the user is authenticated
-
-            // Initialize switch state from Firestore
-            val userDocRef = firestore.collection("users").document(user.uid)
-            userDocRef.get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    if (document != null && document.exists()) {
-                        notificationsEnabled = document.getBoolean("receive_notifications") ?: true
-                    } else {
-                        // Create new user document if none exists
-                        val newUser = User(receive_notifications = true)
-                        userDocRef.set(newUser).addOnSuccessListener {
-                            notificationsEnabled = newUser.receive_notifications
-                        }.addOnFailureListener { e ->
-                            Log.e("UserProfileScreen", "Error creating user document", e)
-                        }
-                    }
-                } else {
-                    Log.e("UserProfileScreen", "Error fetching user data", task.exception)
-                }
-            }
-        }
-    }
-
-    Scaffold (
-        containerColor = dark, // Use theme's background color
+    Scaffold(
+        containerColor = dark,
         contentColor = app_white
-
-    ){
-        // User Profile UI
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(32.dp),
             horizontalAlignment = Alignment.Start
         ) {
-
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                Text(text = "User profile", style = MaterialTheme.typography.headlineMedium)
-
-                avatarImage?.let {
-                    Image(
-                        painter = it,
-                        contentDescription = "User Avatar",
-                        contentScale = ContentScale.Crop, // Crop the image to fit the bounds
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape) // Make the image circular
-                    )
-                } ?: run {
-                    // Fallback if avatarImage is still null
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Default Avatar",
-                        contentScale = ContentScale.Crop, // Crop the image to fit the bounds
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape) // Make the image circular
-                    )
-                }
-            }
+            // Profile Header
+            ProfileHeader(avatarImage = avatarImage)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // TextField for Name
-            TextField(
-                value = userName,
-                onValueChange = {},
-                label = { Text("Name", color = app_white) }, // White label
-                enabled = false,
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = app_white, // White text
-                    disabledContainerColor = grey, // Transparent background
-                    disabledIndicatorColor = grey, // White indicator
-                    disabledLabelColor = grey // White label
-                )
-            )
+            // Name TextField
+            ProfileTextField(label = "Name", value = userName)
 
             Spacer(modifier = Modifier.padding(8.dp))
 
-            // TextField for Email
-            TextField(
-                value = userEmail,
-                onValueChange = {},
-                label = { Text("Email", color = app_white) }, // White label
-                enabled = false,
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = app_white, // White text
-                    disabledContainerColor = grey, // Transparent background
-                    disabledIndicatorColor = grey, // White indicator
-                    disabledLabelColor = grey // White label
-                )
-            )
-
-            //Text(text = userEmail, style = MaterialTheme.typography.bodyMedium)
+            // Email TextField
+            ProfileTextField(label = "Email", value = userEmail)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Switch(
-                checked = notificationsEnabled,
+            // Notifications Switch
+            NotificationsSwitch(
+                notificationsEnabled = notificationsEnabled,
                 onCheckedChange = { isChecked ->
-                    val userDocRef = firestore.collection("users").document(auth.currentUser?.uid ?: "")
-                    userDocRef.update("receive_notifications", isChecked)
-                        .addOnSuccessListener {
-                            notificationsEnabled = isChecked
-                            if(isChecked == true){
-                                FirebaseMessaging.getInstance().subscribeToTopic("all")
-                                    .addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            println("Successfully subscribed to 'all' topic.")
-                                        } else {
-                                            println("Failed to subscribe to 'all' topic.")
-                                        }
-                                    }
-                            }
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("UserProfileScreen", "Error updating notifications setting", e)
-                        }
+                    viewModel.updateNotificationsSetting(isChecked)
                 }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = { signOut(context) }) {
-                Text(text = "Logout")
-            }
+            // Logout Button
+            LogoutButton(onClick = { viewModel.signOut(context) },
+                navController)
         }
     }
 }
 
-fun signOut(context: Context) {
-    AuthUI.getInstance()
-        .signOut(context) // Pass context for sign-out
-        .addOnCompleteListener {
-            // Show sign-out confirmation toast
-            Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
+@Composable
+fun ProfileHeader(avatarImage: Painter) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = "User profile",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.weight(1f)
+        )
+
+        Image(
+            painter = avatarImage,
+            contentDescription = "User Avatar",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+        )
+    }
+}
+@Composable
+fun ProfileTextField(label: String, value: String) {
+    TextField(
+        value = value,
+        onValueChange = {},
+        label = { Text(label, color = app_white) },
+        enabled = false,
+        modifier = Modifier.fillMaxWidth(),
+        colors = TextFieldDefaults.colors(
+            disabledTextColor = app_white,
+            disabledContainerColor = grey,
+            disabledIndicatorColor = grey,
+            disabledLabelColor = grey
+        )
+    )
+}
+@Composable
+fun NotificationsSwitch(
+    notificationsEnabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Switch(
+        checked = notificationsEnabled,
+        onCheckedChange = onCheckedChange
+    )
+}
+
+@Composable
+fun LogoutButton(
+    onClick: () -> Unit, // Handles the logout logic
+    navController: NavController // Handles navigation
+) {
+    Button(onClick = {
+        Log.d("LogoutButton", "Logout button clicked")
+        onClick() // Perform logout
+        Log.d("LogoutButton", "Navigating to login screen")
+        navController.navigate("login") {
+            // Clear the back stack up to and including the start destination
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
         }
+    }) {
+        Text(text = "Logout")
+    }
 }
