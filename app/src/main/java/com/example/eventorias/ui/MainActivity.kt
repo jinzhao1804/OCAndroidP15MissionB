@@ -49,14 +49,7 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     // Setup the Navigation Host and NavController
                     val navController = rememberNavController()
-                    val user = AuthUI.getInstance().auth.currentUser
                     val context = LocalContext.current
-
-                    // Function to sign out the user
-                    val onSignOut: () -> Unit = {
-                        AuthUI.getInstance().signOut(this)
-                    }
-
                     // Current destination for FAB visibility
                     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
 

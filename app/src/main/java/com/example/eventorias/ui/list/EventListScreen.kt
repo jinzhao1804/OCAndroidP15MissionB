@@ -72,17 +72,12 @@ fun EventListScreen(navController: NavController) {
     val viewModel: EventListViewModel = viewModel()
     val state by viewModel.state.collectAsState()
 
-    // Use state properties in the UI
-    val events = state.events
     val isLoading = state.isLoading
     val hasError = state.hasError
     val filteredEvents = state.filteredEvents
-
-    // Use TextFieldValue for searchText
     val searchText = state.searchText
 
     val context = LocalContext.current
-
 
     LaunchedEffect(Unit) {
         viewModel.fetchEvents()
@@ -112,87 +107,31 @@ fun EventListScreen(navController: NavController) {
                 .padding(paddingValues)
                 .background(dark)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Event list",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
-                SearchBar(
-                    searchText = searchText,
-                    onSearchTextChange = { text ->
-                        // Log the updated TextFieldValue
-                        Log.e("EventListScreen", "Updated Text: ${text.text}")
-                        Log.e("EventListScreen", "Updated Cursor Position: ${text.selection}")
-
-                        viewModel.onSearchTextChange(text)
-                    },
-                    modifier = Modifier.weight(1f)
-                )
-                SortButton(
-                    isSortedDescending = state.isSortedDescending,
-                    onClick = {
-                        viewModel.onSortToggle()
-                    }
-                )
-            }
-
-            // Show loading indicator, error message, or event list
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = colorResource(id = R.color.red)
-                    )
+            EventListHeader(
+                searchText = searchText,
+                onSearchTextChange = { text ->
+                    Log.e("EventListScreen", "Updated Text: ${text.text}")
+                    Log.e("EventListScreen", "Updated Cursor Position: ${text.selection}")
+                    viewModel.onSearchTextChange(text)
+                },
+                isSortedDescending = state.isSortedDescending,
+                onSortToggle = {
+                    viewModel.onSortToggle()
                 }
-            } else if (hasError) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Failed to load events. Please check your network connection.",
-                            color = Color.White,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                        Button(
-                            onClick = {
-                                viewModel.fetchEvents()
-                            },
-                            modifier = Modifier.padding(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.red))
-                        ) {
-                            Text(
-                                text = "Try again",
-                                color = colorResource(id = R.color.app_white)
-                            )
-                        }
-                    }
-                }
-            } else {
-                EventList(events = filteredEvents) { event ->
+            )
+
+            when {
+                isLoading -> LoadingIndicator()
+                hasError -> ErrorMessage(onRetry = { viewModel.fetchEvents() })
+                else -> EventList(events = filteredEvents) { event ->
                     navController.navigate("detail/${event.id}")
                 }
             }
         }
     }
 }
+
+
 
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
@@ -294,6 +233,85 @@ fun SearchBar(
         }
     }
 }
+
+@Composable
+fun LoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = colorResource(id = R.color.red)
+        )
+    }
+}
+
+@Composable
+fun ErrorMessage(onRetry: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Failed to load events. Please check your network connection.",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.padding(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.red))
+            ) {
+                Text(
+                    text = "Try again",
+                    color = colorResource(id = R.color.app_white)
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun EventListHeader(
+    searchText: TextFieldValue,
+    onSearchTextChange: (TextFieldValue) -> Unit,
+    isSortedDescending: Boolean,
+    onSortToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Event list",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White
+        )
+        SearchBar(
+            searchText = searchText,
+            onSearchTextChange = onSearchTextChange,
+            modifier = Modifier.weight(1f)
+        )
+        SortButton(
+            isSortedDescending = isSortedDescending,
+            onClick = onSortToggle
+        )
+    }
+}
+
+
 @Composable
 fun SortButton(isSortedDescending: Boolean, onClick: () -> Unit) {
     Button(onClick = onClick,
@@ -391,40 +409,3 @@ fun EventItem(event: Event, onEventClick: (Event) -> Unit) {
     }
 }
 
-
-fun filterAndSortEvents(events: List<Event>, query: String, isDescending: Boolean): List<Event> {
-    val filteredEvents = events.filter { it.title.contains(query, ignoreCase = true) }
-    val sortedEvents = filteredEvents.sortedByDescending { parseDate(it.date) }.toMutableList()
-    if (!isDescending) {
-        sortedEvents.reverse()
-    }
-    return sortedEvents
-}
-
-fun parseDate(dateString: String): Date? {
-    val dateFormats = arrayOf(
-        SimpleDateFormat("M/d/yyyy", Locale.getDefault()),
-        SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
-    )
-
-    for (format in dateFormats) {
-        try {
-            return format.parse(dateString)
-        } catch (e: ParseException) {
-            // Continue to try other formats
-        }
-    }
-    return null
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSearchBar() {
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    SearchBar(
-        searchText = searchText,
-        onSearchTextChange = { newValue ->
-            searchText = newValue
-        }
-    )
-}

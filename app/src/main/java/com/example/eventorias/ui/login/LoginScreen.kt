@@ -39,13 +39,14 @@ fun LoginScreen(
         }
     }
 
-    // Navigate to the home screen if the user is logged in
+    // Navigate to the events screen if the user is logged in
     LaunchedEffect(user) {
         user?.let {
             navController.navigate("events") {
                 popUpTo(navController.graph.findStartDestination().id) {
                     inclusive = true
-                }            }
+                }
+            }
         }
     }
 
