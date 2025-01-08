@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -81,6 +82,7 @@ fun EventListScreen(navController: NavController) {
     val searchText = state.searchText
 
     val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
         viewModel.fetchEvents()
@@ -202,6 +204,7 @@ fun SearchBar(
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current // Keyboard controller
+    val focusManager = LocalFocusManager.current // Focus manager
 
     // Toggle focus when isFocused changes
     LaunchedEffect(isFocused) {
@@ -250,13 +253,15 @@ fun SearchBar(
                     // Toggle focus and hide the keyboard
                     isFocused = !isFocused
                     keyboardController?.hide() // Hide the keyboard
+                    focusManager.clearFocus() // Unfocus the TextField
+
                 }
             ),
             singleLine = true,
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.LightGray,
-                unfocusedContainerColor = Color.DarkGray,
-                disabledContainerColor = Color.DarkGray,
+                unfocusedContainerColor = dark,
+                disabledContainerColor = dark,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 cursorColor = Color.White, // Customize cursor color
@@ -271,6 +276,8 @@ fun SearchBar(
                 // Toggle focus and hide the keyboard
                 isFocused = !isFocused
                 keyboardController?.hide() // Hide the keyboard
+                focusManager.clearFocus() // Unfocus the TextField
+
             },
             modifier = Modifier.size(48.dp), // Set explicit size for the IconButton
             colors = IconButtonDefaults.iconButtonColors(

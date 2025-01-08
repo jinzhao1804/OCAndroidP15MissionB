@@ -82,7 +82,7 @@ class EventListViewModel : ViewModel() {
         _state.value = _state.value.copy(
             isSortedDescending = isDescending,
             filteredEvents = filterAndSortEvents(_state.value.events,
-                _state.value.searchText.toString(), isDescending)
+                _state.value.searchText.text, isDescending)
         )
     }
 
