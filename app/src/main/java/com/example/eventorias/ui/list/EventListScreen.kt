@@ -1,7 +1,7 @@
 package com.example.eventorias.ui.list
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,18 +9,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,73 +35,55 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.Log
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.eventorias.R
-import com.example.eventorias.R.color
 import com.example.eventorias.data.Event
-import com.example.eventorias.data.User
 import com.example.eventorias.ui.add.CreateEventActivity
-import com.example.eventorias.ui.detail.EventDetailActivity
+import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
 import com.example.eventorias.ui.theme.grey
-import com.google.firebase.firestore.FirebaseFirestore
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun EventListScreen(navController: NavController) {
-    var events by remember { mutableStateOf<List<Event>>(emptyList()) }
-    var filteredEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var isSortedDescending by remember { mutableStateOf(true) }
+    val viewModel: EventListViewModel = viewModel()
+    val state by viewModel.state.collectAsState()
+
+    // Use state properties in the UI
+    val events = state.events
+    val isLoading = state.isLoading
+    val hasError = state.hasError
+    val filteredEvents = state.filteredEvents
+
+    // Use TextFieldValue for searchText
+    val searchText = state.searchText
 
     val context = LocalContext.current
-    val firestore = FirebaseFirestore.getInstance()
 
-    // Listen to Firestore for updates
     LaunchedEffect(Unit) {
-        firestore.collection("events")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Toast.makeText(context, "Failed to fetch events: ${e.message}", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                val newEvents = snapshot?.documents?.map { document ->
-                    val id = document.id
-                    val title = document.getString("title") ?: ""
-                    val description = document.getString("description") ?: ""
-                    val imageUrl = document.getString("imageUrl") ?: ""
-                    val latitude = document.getDouble("latitude") ?: 0.0
-                    val longitude = document.getDouble("longitude") ?: 0.0
-                    val date = document.getString("date") ?: ""
-                    val time = document.getString("time") ?: ""
-                    val address = document.getString("address") ?: ""
-                    val userRef = document.getDocumentReference("user")
-
-                    // Fetch the user data from Firestore asynchronously
-                    val userSnapshot = userRef?.get()?.result
-                    val user = userSnapshot?.toObject(User::class.java) ?: User()
-
-                    Event(id, title, description, imageUrl, latitude, longitude, date, time, address, user)
-                } ?: emptyList()
-
-                events = newEvents
-                filteredEvents = filterAndSortEvents(events, searchText.text, isSortedDescending)
-            }
+        viewModel.fetchEvents()
     }
 
     Scaffold(
@@ -135,92 +122,194 @@ fun EventListScreen(navController: NavController) {
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
+                SearchBar(
+                    searchText = searchText,
+                    onSearchTextChange = { text ->
+                        // Log the updated TextFieldValue
+                        Log.e("EventListScreen", "Updated Text: ${text.text}")
+                        Log.e("EventListScreen", "Updated Cursor Position: ${text.selection}")
 
-                // Search Bar
-                SearchBar(searchText) { text ->
-                    searchText = text
-                    filteredEvents = filterAndSortEvents(events, text.text, isSortedDescending)
-                }
-
-                // Sort Button
-                SortButton(isSortedDescending) {
-                    isSortedDescending = !isSortedDescending
-                    filteredEvents = filterAndSortEvents(events, searchText.text, isSortedDescending)
-                }
+                        viewModel.onSearchTextChange(text)
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                SortButton(
+                    isSortedDescending = state.isSortedDescending,
+                    onClick = {
+                        viewModel.onSortToggle()
+                    }
+                )
             }
 
-            // Event List
-            EventList(events = filteredEvents) { event ->
-                navController.navigate("detail/${event.id}")
+            // Show loading indicator, error message, or event list
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = colorResource(id = R.color.red)
+                    )
+                }
+            } else if (hasError) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Failed to load events. Please check your network connection.",
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        Button(
+                            onClick = {
+                                viewModel.fetchEvents()
+                            },
+                            modifier = Modifier.padding(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.red))
+                        ) {
+                            Text(
+                                text = "Try again",
+                                color = colorResource(id = R.color.app_white)
+                            )
+                        }
+                    }
+                }
+            } else {
+                EventList(events = filteredEvents) { event ->
+                    navController.navigate("detail/${event.id}")
+                }
             }
         }
     }
 }
 
-
-
+@SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun SearchBar(
-    searchText: TextFieldValue,
-    onSearchTextChange: (TextFieldValue) -> Unit
+    searchText: TextFieldValue, // Use TextFieldValue for text input
+    onSearchTextChange: (TextFieldValue) -> Unit, // Callback for text changes
+    modifier: Modifier = Modifier // Correct modifier type
 ) {
-    val isSearchActive = remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current // Keyboard controller
+
+    // Toggle focus when isFocused changes
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
+            focusRequester.requestFocus()
+        } else {
+            focusRequester.freeFocus()
+        }
+    }
 
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .padding(8.dp) // Add padding for better spacing
     ) {
-            TextField(
-                value = searchText,
-                onValueChange = onSearchTextChange,
-                modifier = Modifier
-                    .width(220.dp) // Limiting the width of the search bar
-                    .padding(16.dp),
-                placeholder = { if (isSearchActive.value) Text("Search")},
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = if (isSearchActive.value) grey else dark,
-                    unfocusedContainerColor = if (isSearchActive.value) dark else dark,
-                    disabledContainerColor = dark,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+        TextField(
+            value = searchText, // Pass TextFieldValue
+            onValueChange = { newValue ->
+                // Update the searchText state with the new TextFieldValue
+
+                Log.e("SearchBar", "New Text: ${newValue.text}")
+                Log.e("SearchBar", "Cursor Position: ${newValue.selection}")
+
+                onSearchTextChange(
+                    TextFieldValue(
+                        text = newValue.text,
+                        selection = TextRange(newValue.text.length)
+                    )
+                )
+            },
+            modifier = Modifier
+                .weight(1f) // Take up remaining space
+                .padding(end = 8.dp)
+                .focusRequester(focusRequester) // Attach FocusRequester
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                },
+            placeholder = {
+                if (isFocused) {
+                    Text("Search...")
+                }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    // Toggle focus and hide the keyboard
+                    isFocused = !isFocused
+                    keyboardController?.hide() // Hide the keyboard
+                }
+            ),
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.LightGray,
+                unfocusedContainerColor = Color.DarkGray,
+                disabledContainerColor = Color.DarkGray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color.White, // Customize cursor color
+                selectionColors = TextSelectionColors(
+                    handleColor = Color.White,
+                    backgroundColor = Color.Gray
                 )
             )
-        Button(
+        )
+        IconButton(
             onClick = {
-                isSearchActive.value = !isSearchActive.value // Toggle the state
+                // Toggle focus and hide the keyboard
+                isFocused = !isFocused
+                keyboardController?.hide() // Hide the keyboard
             },
-            modifier = Modifier.size(48.dp), // Adjust size of the button if needed
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-            contentPadding = PaddingValues(0.dp), // Remove padding to only show the icon
-            shape = RectangleShape // Make sure it has no border or default rounded corners
+            modifier = Modifier.size(48.dp), // Set explicit size for the IconButton
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.Transparent, // Transparent background
+                contentColor = MaterialTheme.colorScheme.onSurface // Ensure the icon color is visible
+            )
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search"
+                contentDescription = "Search",
+                modifier = Modifier.size(24.dp), // Set explicit size for the Icon
+                tint = Color.White // Customize icon color
             )
         }
     }
 }
-
-
 @Composable
 fun SortButton(isSortedDescending: Boolean, onClick: () -> Unit) {
     Button(onClick = onClick,
         modifier = Modifier.size(48.dp), // Adjust size of the button if needed
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(0.dp), // Remove padding to only show the icon
-        shape = RectangleShape
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent, // Transparent background
+            contentColor = MaterialTheme.colorScheme.onSurface // Ensure the icon color is visible
+        ),
+        contentPadding = PaddingValues(8.dp), // Add some padding to ensure the icon is visible
+        shape = CircleShape
     ) {
         if (isSortedDescending) {
-            Image(
+            Icon(
                 painter = painterResource(id = R.drawable.sort), // Use painterResource for drawable
-                contentDescription = "Sort Icon"
+                contentDescription = "Sort Icon",
+                tint = app_white
+
             )
         } else {
             Icon(
                 imageVector = Icons.Default.ArrowDropDown, // Use imageVector for Material icons
                 contentDescription = "Arrow Drop Down",
-                tint = colorResource(id = R.color.app_white)
+                tint = app_white
             )
         }
 
@@ -254,7 +343,7 @@ fun EventItem(event: Event, onEventClick: (Event) -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween, // This ensures the last image is placed at the end
             verticalAlignment = Alignment.CenterVertically // Aligns all items vertically in the center
         ) {
-            
+
             Spacer(modifier = Modifier.padding(8.dp))
             // User profile image
             Image(
@@ -319,4 +408,16 @@ fun parseDate(dateString: String): Date? {
         }
     }
     return null
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchBar() {
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    SearchBar(
+        searchText = searchText,
+        onSearchTextChange = { newValue ->
+            searchText = newValue
+        }
+    )
 }

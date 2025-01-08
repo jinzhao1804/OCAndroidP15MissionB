@@ -56,16 +56,6 @@ android {
     defaultConfig {
         buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
     }
-
-    buildTypes {
-        debug {
-
-           // buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
-        }
-        release {
-           //  buildConfigField ("String", "API_KEY", "AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI")
-        }
-    }
 }
 
 dependencies {
@@ -119,6 +109,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.animation.core.android)
+    implementation(libs.androidx.media3.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
