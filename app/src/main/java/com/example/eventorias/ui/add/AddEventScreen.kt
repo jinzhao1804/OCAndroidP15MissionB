@@ -31,11 +31,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.eventorias.R
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
+import com.example.eventorias.ui.theme.grey
 import com.example.eventorias.ui.theme.red
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
@@ -182,8 +185,14 @@ class CreateEventActivity : ComponentActivity() {
                     TextField(
                         value = title,
                         onValueChange = { title = it },
-                        label = { Text("Event Title") },
-                        modifier = Modifier.fillMaxWidth()
+                        label = { Text("Event Title",color = app_white) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = app_white,
+                            unfocusedTextColor = app_white,
+                            focusedContainerColor = grey,
+                            unfocusedContainerColor = grey
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -191,8 +200,14 @@ class CreateEventActivity : ComponentActivity() {
                     TextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Event Description") },
-                        modifier = Modifier.fillMaxWidth()
+                        label = { Text("Event Description",color = app_white) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = app_white,
+                            unfocusedTextColor = app_white,
+                            focusedContainerColor = grey,
+                            unfocusedContainerColor = grey
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -217,8 +232,14 @@ class CreateEventActivity : ComponentActivity() {
                     TextField(
                         value = address,
                         onValueChange = { address = it },
-                        label = { Text("Enter full Address") },
-                        modifier = Modifier.fillMaxWidth()
+                        label = { Text("Enter full Address", color = app_white) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = app_white,
+                            unfocusedTextColor = app_white,
+                            focusedContainerColor = grey,
+                            unfocusedContainerColor = grey
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -284,16 +305,22 @@ class CreateEventActivity : ComponentActivity() {
         TextField(
             value = date,
             onValueChange = { onDateChange(it) },
-            label = { Text("Event Date") },
+            label = { Text("Event Date", color = app_white) },
             readOnly = true,
             modifier = Modifier.fillMaxWidth(fraction = 0.45f),
             trailingIcon = {
                 IconButton(onClick = {
                     showDialog = true // Show the Date Picker dialog when clicked
                 }) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+                    Icon(Icons.Default.DateRange, contentDescription = "Select Date", tint = app_white)
                 }
-            }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = app_white,
+                unfocusedTextColor = app_white,
+                focusedContainerColor = grey,
+                unfocusedContainerColor = grey
+            )
         )
 
     }
@@ -337,16 +364,22 @@ class CreateEventActivity : ComponentActivity() {
         TextField(
             value = time,
             onValueChange = { onTimeChange(it) },
-            label = { Text("Event Time") },
+            label = { Text("Event Time", color = app_white) },
             readOnly = true,
             modifier = Modifier.fillMaxWidth(fraction = 0.90f),
             trailingIcon = {
                 IconButton(onClick = {
                     showDialog = true // Show the Time Picker dialog when clicked
                 }) {
-                    Icon(Icons.Default.Edit, contentDescription = "Select Time")
+                    Icon(Icons.Default.Edit, contentDescription = "Select Time", tint = app_white)
                 }
-            }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = app_white,
+                unfocusedTextColor = app_white,
+                focusedContainerColor = grey,
+                unfocusedContainerColor = grey
+            )
         )
     }
 
