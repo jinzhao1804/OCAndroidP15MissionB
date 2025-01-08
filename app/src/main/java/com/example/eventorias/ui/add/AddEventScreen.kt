@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -137,6 +138,8 @@ class CreateEventActivity : ComponentActivity() {
         var description by remember { mutableStateOf("") }
 
         Scaffold(
+            containerColor = dark, // Use theme's background color
+
             topBar = {
                 TopAppBar(
                     title = {
@@ -150,9 +153,16 @@ class CreateEventActivity : ComponentActivity() {
                         IconButton(onClick = {
                             (context as? ComponentActivity)?.finish()
                         }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back",
+                                tint = app_white)
+
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = dark, // Set background color to dark (e.g., black)
+                        titleContentColor = app_white, // Set title text color to white
+                        actionIconContentColor = app_white // Set icon color to white
+                    )
                 )
             }
         ) { innerPadding ->

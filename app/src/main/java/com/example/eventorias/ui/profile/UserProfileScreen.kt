@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.profile
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -18,11 +20,15 @@ import androidx.compose.ui.unit.dp
 import com.example.eventorias.MyFirebaseMessagingService
 import com.example.eventorias.R
 import com.example.eventorias.data.User
+import com.example.eventorias.ui.theme.app_white
+import com.example.eventorias.ui.theme.dark
+import com.example.eventorias.ui.theme.grey
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UserProfileScreen(context: Context) {
     val auth = FirebaseAuth.getInstance()
@@ -66,93 +72,114 @@ fun UserProfileScreen(context: Context) {
         }
     }
 
-    // User Profile UI
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
+    Scaffold (
+        containerColor = dark, // Use theme's background color
+        contentColor = app_white
 
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(text = "User profile", style = MaterialTheme.typography.headlineMedium)
+    ){
+        // User Profile UI
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
 
-            avatarImage?.let {
-                Image(
-                    painter = it,
-                    contentDescription = "User Avatar",
-                    contentScale = ContentScale.Crop, // Crop the image to fit the bounds
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape) // Make the image circular
-                )
-            } ?: run {
-                // Fallback if avatarImage is still null
-                Image(
-                    painter = painterResource(id = R.drawable.profile),
-                    contentDescription = "Default Avatar",
-                    contentScale = ContentScale.Crop, // Crop the image to fit the bounds
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape) // Make the image circular
-                )
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(text = "User profile", style = MaterialTheme.typography.headlineMedium)
+
+                avatarImage?.let {
+                    Image(
+                        painter = it,
+                        contentDescription = "User Avatar",
+                        contentScale = ContentScale.Crop, // Crop the image to fit the bounds
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape) // Make the image circular
+                    )
+                } ?: run {
+                    // Fallback if avatarImage is still null
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "Default Avatar",
+                        contentScale = ContentScale.Crop, // Crop the image to fit the bounds
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape) // Make the image circular
+                    )
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        //Text(text = userName, style = MaterialTheme.typography.bodyLarge)
-        TextField(
-            value = userName,
-            onValueChange = {},
-            label = { Text("Name") },
-            enabled = false,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
-        TextField(
-            value = userEmail,
-            onValueChange = {},
-            label = { Text("Email") },
-            enabled = false,
-            modifier = Modifier.fillMaxWidth()
-        )
+            // TextField for Name
+            TextField(
+                value = userName,
+                onValueChange = {},
+                label = { Text("Name", color = app_white) }, // White label
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    disabledTextColor = app_white, // White text
+                    disabledContainerColor = grey, // Transparent background
+                    disabledIndicatorColor = grey, // White indicator
+                    disabledLabelColor = grey // White label
+                )
+            )
 
-        //Text(text = userEmail, style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.padding(8.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            // TextField for Email
+            TextField(
+                value = userEmail,
+                onValueChange = {},
+                label = { Text("Email", color = app_white) }, // White label
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    disabledTextColor = app_white, // White text
+                    disabledContainerColor = grey, // Transparent background
+                    disabledIndicatorColor = grey, // White indicator
+                    disabledLabelColor = grey // White label
+                )
+            )
 
-        Switch(
-            checked = notificationsEnabled,
-            onCheckedChange = { isChecked ->
-                val userDocRef = firestore.collection("users").document(auth.currentUser?.uid ?: "")
-                userDocRef.update("receive_notifications", isChecked)
-                    .addOnSuccessListener {
-                        notificationsEnabled = isChecked
-                        if(isChecked == true){
-                            FirebaseMessaging.getInstance().subscribeToTopic("all")
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        println("Successfully subscribed to 'all' topic.")
-                                    } else {
-                                        println("Failed to subscribe to 'all' topic.")
+            //Text(text = userEmail, style = MaterialTheme.typography.bodyMedium)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Switch(
+                checked = notificationsEnabled,
+                onCheckedChange = { isChecked ->
+                    val userDocRef = firestore.collection("users").document(auth.currentUser?.uid ?: "")
+                    userDocRef.update("receive_notifications", isChecked)
+                        .addOnSuccessListener {
+                            notificationsEnabled = isChecked
+                            if(isChecked == true){
+                                FirebaseMessaging.getInstance().subscribeToTopic("all")
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            println("Successfully subscribed to 'all' topic.")
+                                        } else {
+                                            println("Failed to subscribe to 'all' topic.")
+                                        }
                                     }
-                                }
+                            }
                         }
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("UserProfileScreen", "Error updating notifications setting", e)
-                    }
+                        .addOnFailureListener { e ->
+                            Log.e("UserProfileScreen", "Error updating notifications setting", e)
+                        }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = { signOut(context) }) {
+                Text(text = "Logout")
             }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { signOut(context) }) {
-            Text(text = "Logout")
         }
     }
 }
