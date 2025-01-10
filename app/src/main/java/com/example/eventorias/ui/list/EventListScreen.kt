@@ -44,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
@@ -174,6 +175,7 @@ fun SearchBar(
                 )
             },
             modifier = Modifier
+                .testTag("SearchInputField") // Add this line
                 .weight(1f) // Take up remaining space
                 .padding(end = 8.dp)
                 .focusRequester(focusRequester) // Attach FocusRequester
@@ -242,7 +244,8 @@ fun LoadingIndicator() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
-            color = colorResource(id = R.color.red)
+            color = colorResource(id = R.color.red),
+            modifier = Modifier.testTag("Loading Indicator") // Add a test tag
         )
     }
 }
