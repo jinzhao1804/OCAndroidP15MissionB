@@ -24,6 +24,7 @@ android {
         }
     }
 
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,6 +34,16 @@ android {
             )
         }
     }
+
+
+    // Add this block for unit test configuration
+    testOptions {
+        unitTests.all {
+            // Configure JVM arguments for unit tests
+            it.jvmArgs = listOf("-Dnet.bytebuddy.experimental=true")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -53,13 +64,35 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildTypes {
+        debug {
+            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+            // etc.
+        }
+        release {
+            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+            // etc.
+        }
+    }
     defaultConfig {
         buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
     }
 }
 
+
+
 dependencies {
 
+
+    // Tests
+    implementation ("net.bytebuddy:byte-buddy:1.14.9")
+    testImplementation ("org.slf4j:slf4j-simple:2.0.6")
+    testImplementation ("io.mockk:mockk:1.13.4")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("org.mockito:mockito-core:4.2.0")
+    testImplementation ("org.mockito:mockito-core:4.2.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 
     implementation ("com.google.android.material:material:1.12.0")
 

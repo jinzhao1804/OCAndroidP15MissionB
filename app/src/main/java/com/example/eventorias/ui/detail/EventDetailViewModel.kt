@@ -11,13 +11,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import android.location.Geocoder
+import androidx.lifecycle.ViewModelProvider
 import com.example.eventorias.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class EventDetailViewModel : ViewModel() {
-    private val firestore = FirebaseFirestore.getInstance()
+open class EventDetailViewModel (
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val geocoder: Geocoder // Accept Geocoder as a dependency
+
+
+): ViewModel() {
+
 
     // State to hold the event data
     private val _event = MutableStateFlow<Event?>(null)
@@ -26,6 +32,23 @@ class EventDetailViewModel : ViewModel() {
     // State to hold the map image URL
     private val _mapImageUrl = MutableStateFlow<String?>(null)
     val mapImageUrl: StateFlow<String?> get() = _mapImageUrl
+
+    // Function to get coordinates from an address
+    fun getCoordinatesFromAddress(address: String, context: Context): Pair<Double, Double>? {
+        return try {
+            //val geocoder = Geocoder(context, Locale.getDefault())
+            val addressList = geocoder.getFromLocationName(address, 1)
+            if (addressList.isNullOrEmpty()) {
+                null
+            } else {
+                val location = addressList[0]
+                Pair(location.latitude, location.longitude)
+            }
+        } catch (e: Exception) {
+            Log.e("EventDetail", "Geocoding error: ${e.message}")
+            null
+        }
+    }
 
     // Function to fetch event details
     fun fetchEventDetails(eventId: String, context: Context) {
@@ -52,22 +75,7 @@ class EventDetailViewModel : ViewModel() {
         }
     }
 
-    // Function to get coordinates from an address
-    fun getCoordinatesFromAddress(address: String, context: Context): Pair<Double, Double>? {
-        return try {
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addressList = geocoder.getFromLocationName(address, 1)
-            if (addressList.isNullOrEmpty()) {
-                null
-            } else {
-                val location = addressList[0]
-                Pair(location.latitude, location.longitude)
-            }
-        } catch (e: Exception) {
-            Log.e("EventDetail", "Geocoding error: ${e.message}")
-            null
-        }
-    }
+
 
     // Function to generate a map image URL
     fun generateMapImageUrl(latitude: Double, longitude: Double): String {
@@ -95,16 +103,29 @@ class EventDetailViewModel : ViewModel() {
         if (timeString.isNullOrEmpty()) return ""
 
         // Define the input and output time formats
-        val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault()) // Adjust input format as needed
-        val outputFormat = SimpleDateFormat("hh:mm  a", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault()) // 24-hour format
+        val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // 12-hour format with AM/PM
 
         return try {
             val time: Date = inputFormat.parse(timeString) ?: return ""
-            outputFormat.format(time)
+            val formattedTime = outputFormat.format(time)
+            //Log.d("EventDetail", "Formatted time: $formattedTime")
+            formattedTime
+
         } catch (e: Exception) {
             Log.e("EventDetail", "Error formatting time: ${e.message}")
             ""
         }
     }
 
+}
+
+class EventDetailViewModelFactory(
+    private val context: Context
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val firestore = FirebaseFirestore.getInstance() // Initialize Firestore
+        val geocoder = Geocoder(context, Locale.getDefault()) // Initialize Geocoder
+        return EventDetailViewModel(firestore, geocoder) as T
+    }
 }

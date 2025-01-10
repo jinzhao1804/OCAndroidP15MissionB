@@ -1,8 +1,11 @@
 package com.example.eventorias.ui.detail
 
+import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +25,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -30,8 +36,14 @@ import com.example.eventorias.R
 import com.example.eventorias.data.Event
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
+import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 class EventDetailActivity : ComponentActivity() {
+
+    private val viewModel: EventDetailViewModel by viewModels {
+        EventDetailViewModelFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +67,13 @@ class EventDetailActivity : ComponentActivity() {
 
 @Composable
 fun EventDetailScreen(eventId: String, navController: NavController) {
-    val viewModel: EventDetailViewModel = viewModel()
+
+    val context = LocalContext.current
+    val viewModel: EventDetailViewModel = viewModel(
+        factory = EventDetailViewModelFactory(context)
+    )
     val event by viewModel.event.collectAsState()
     val mapImageUrl by viewModel.mapImageUrl.collectAsState()
-    val context = LocalContext.current
 
     // Fetch event details when the screen is launched
     LaunchedEffect(eventId) {
@@ -71,7 +86,7 @@ fun EventDetailScreen(eventId: String, navController: NavController) {
             event = eventData,
             mapImageUrl = mapImageUrl,
             onBackPressed = { navController.popBackStack() },
-            viewModel = EventDetailViewModel()
+            viewModel = viewModel
         )
     }
 }
