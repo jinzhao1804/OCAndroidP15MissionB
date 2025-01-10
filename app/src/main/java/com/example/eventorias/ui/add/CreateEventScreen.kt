@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -40,7 +41,7 @@ import com.example.eventorias.ui.theme.*
 @Composable
 fun CreateEventScreen(
     navController: NavController,
-    onBackPressed: () -> Unit, // Callback for back navigation
+    onBackPressed: () -> Unit,
     viewModel: CreateEventViewModel = viewModel()
 ) {
     val state = viewModel.uiState.collectAsState()
@@ -51,11 +52,10 @@ fun CreateEventScreen(
 
     LaunchedEffect(eventSaved) {
         if (eventSaved) {
-            navController.popBackStack() // Navigate back on success
+            navController.popBackStack()
         }
     }
 
-    // Gallery Launcher
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -67,7 +67,6 @@ fun CreateEventScreen(
         }
     }
 
-    // Camera Launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -79,7 +78,6 @@ fun CreateEventScreen(
         }
     }
 
-    // Permissions Launcher
     val requestPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -91,7 +89,6 @@ fun CreateEventScreen(
         }
     }
 
-    // Check and request permissions when the screen is first launched
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissionsLauncher.launch(
@@ -106,27 +103,7 @@ fun CreateEventScreen(
 
     Scaffold(
         containerColor = dark,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Creation of an event",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = app_white)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = dark,
-                    titleContentColor = app_white,
-                    actionIconContentColor = app_white
-                )
-            )
-        }
+        topBar = { CreateEventTopAppBar(onBackPressed) }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -139,144 +116,51 @@ fun CreateEventScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // TextFields and other UI components
-                TextField(
-                    value = state.value.title,
-                    onValueChange = { viewModel.updateTitle(it) },
-                    label = { Text("Event Title", color = app_white) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = app_white,
-                        unfocusedTextColor = app_white,
-                        focusedContainerColor = grey,
-                        unfocusedContainerColor = grey
-                    )
+                EventDetailsForm(
+                    state = state.value,
+                    onTitleChange = { viewModel.updateTitle(it) },
+                    onDescriptionChange = { viewModel.updateDescription(it) },
+                    onDateChange = { viewModel.updateDate(it) },
+                    onTimeChange = { viewModel.updateTime(it) },
+                    onAddressChange = { viewModel.updateAddress(it) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                TextField(
-                    value = state.value.description,
-                    onValueChange = { viewModel.updateDescription(it) },
-                    label = { Text("Event Description", color = app_white) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = app_white,
-                        unfocusedTextColor = app_white,
-                        focusedContainerColor = grey,
-                        unfocusedContainerColor = grey
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    DateInputField(
-                        date = state.value.date,
-                        onDateChange = { viewModel.updateDate(it) }
-                    )
-
-                    TimeInputField(
-                        time = state.value.time,
-                        onTimeChange = { viewModel.updateTime(it) }
+                imageUri?.let { uri ->
+                    Image(
+                        painter = rememberImagePainter(data = uri),
+                        contentDescription = "Selected Image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                TextField(
-                    value = state.value.address,
-                    onValueChange = { viewModel.updateAddress(it) },
-                    label = { Text("Enter full Address", color = app_white) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = app_white,
-                        unfocusedTextColor = app_white,
-                        focusedContainerColor = grey,
-                        unfocusedContainerColor = grey
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.width(150.dp)
-                ) {
-
-
-                    imageUri?.let { uri ->
-                        Image(
-                            painter = rememberImagePainter(data = uri),
-                            contentDescription = "Selected Image",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(16.dp)
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            // Create an intent to launch the camera
-                            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            cameraLauncher.launch(takePictureIntent)
-                        },
-                        modifier = Modifier
-                            .width(52.dp)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = app_white // Ensure the button background is white
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.camera), // Replace with your camera icon resource
-                            contentDescription = "Take Picture",
-                            tint = dark,
-                            modifier = Modifier.fillMaxSize() // Make the icon fill the button
-
-                        )
-                    }
-
-                    Button(onClick = {
+                ImageSelectionButtons(
+                    onCameraClick = {
+                        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        cameraLauncher.launch(takePictureIntent)
+                    },
+                    onGalleryClick = {
                         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
                             type = "image/*"
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
                         galleryLauncher.launch(Intent.createChooser(intent, "Select Image"))
                     },
-                        modifier = Modifier
-                            .width(52.dp)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
-
-                    ){
-                        Icon(
-                            painter = painterResource(id = R.drawable.file),
-                            contentDescription = "Select Image from Gallery",
-                            tint = app_white,
-                            modifier = Modifier.fillMaxSize() // Make the icon fill the button
-
-                        )
-
-
-                    }
-                }
+                    cornerRadius = cornerRadius
+                )
             }
 
             Button(
-                onClick = { viewModel.onSaveEvent(
-                    context = context
-                )},
+                onClick = { viewModel.onSaveEvent(context = context) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(32.dp)
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
+                shape = RoundedCornerShape(cornerRadius),
                 colors = ButtonDefaults.buttonColors(containerColor = red)
             ) {
                 Text("Validate")
@@ -284,6 +168,156 @@ fun CreateEventScreen(
         }
     }
 }
+
+@Composable
+fun EventDetailsForm(
+    state: CreateEventState,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onDateChange: (String) -> Unit,
+    onTimeChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextField(
+            value = state.title,
+            onValueChange = onTitleChange,
+            label = { Text("Event Title", color = app_white) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = app_white,
+                unfocusedTextColor = app_white,
+                focusedContainerColor = grey,
+                unfocusedContainerColor = grey
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = state.description,
+            onValueChange = onDescriptionChange,
+            label = { Text("Event Description", color = app_white) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = app_white,
+                unfocusedTextColor = app_white,
+                focusedContainerColor = grey,
+                unfocusedContainerColor = grey
+            )
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            DateInputField(
+                date = state.date,
+                onDateChange = onDateChange
+            )
+
+            TimeInputField(
+                time = state.time,
+                onTimeChange = onTimeChange
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = state.address,
+            onValueChange = onAddressChange,
+            label = { Text("Enter full Address", color = app_white) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = app_white,
+                unfocusedTextColor = app_white,
+                focusedContainerColor = grey,
+                unfocusedContainerColor = grey
+            )
+        )
+    }
+}
+
+@Composable
+fun ImageSelectionButtons(
+    onCameraClick: () -> Unit,
+    onGalleryClick: () -> Unit,
+    cornerRadius: Dp // Change to Dp type
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.width(150.dp)
+    ) {
+        Button(
+            onClick = onCameraClick,
+            modifier = Modifier
+                .width(52.dp)
+                .height(52.dp),
+            shape = RoundedCornerShape(cornerRadius), // Use the passed cornerRadius
+            colors = ButtonDefaults.buttonColors(containerColor = app_white)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.camera),
+                contentDescription = "Take Picture",
+                tint = dark,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        Button(
+            onClick = onGalleryClick,
+            modifier = Modifier
+                .width(52.dp)
+                .height(52.dp),
+            shape = RoundedCornerShape(cornerRadius), // Use the passed cornerRadius
+            colors = ButtonDefaults.buttonColors(containerColor = red) // Add a color for consistency
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.file),
+                contentDescription = "Select Image from Gallery",
+                tint = app_white,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateEventTopAppBar(onBackPressed: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Creation of an event",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackPressed) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = app_white)
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = dark,
+            titleContentColor = app_white,
+            actionIconContentColor = app_white
+        )
+    )
+}
+
+
 
 @Composable
 fun DateInputField(date: String, onDateChange: (String) -> Unit) {

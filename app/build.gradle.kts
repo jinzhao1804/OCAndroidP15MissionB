@@ -87,7 +87,10 @@ dependencies {
 
 
     implementation(libs.core.ktx)
+    implementation(libs.androidx.navigation.testing)
     // Tests
+    androidTestImplementation ("org.mockito:mockito-android:4.0.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.6.1")
     testImplementation ("org.mockito:mockito-inline:5.2.0")
     implementation ("net.bytebuddy:byte-buddy:1.14.9")
     testImplementation ("org.slf4j:slf4j-simple:2.0.6")
