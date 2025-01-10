@@ -23,10 +23,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.eventorias.R
 import com.example.eventorias.ui.theme.dark
 import com.example.eventorias.ui.theme.EventoriasTheme
@@ -118,13 +120,17 @@ class MainActivity : ComponentActivity() {
                                         onBackPressed = { navController.popBackStack() }
                                     )
                                 }
-                                composable("detail/{eventId}") { backStackEntry ->
-                                    // Retrieve the eventId from the back stack entry
-                                    val eventId = backStackEntry.arguments?.getString("eventId")
-                                    if (eventId != null) {
-                                        // Pass the eventId to EventDetailScreen
-                                        EventDetailScreen(eventId = eventId, navController = navController)
-                                    }
+                                // Define the EventDetailScreen route with an eventId argument
+                                composable(
+                                    route = "detail/{eventId}", // Define the route with a parameter
+                                    arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+                                ) { backStackEntry ->
+                                    // Extract the eventId from the route
+                                    val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+                                    EventDetailScreen(
+                                        eventId = eventId,
+                                        onBackPressed = { navController.popBackStack() }
+                                    )
                                 }
                                 composable("login") {
                                     LoginScreen(

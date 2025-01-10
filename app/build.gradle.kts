@@ -79,6 +79,14 @@ android {
     defaultConfig {
         buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+            excludes += "/META-INF/NOTICE.md"
+        }
+    }
 }
 
 
@@ -88,7 +96,15 @@ dependencies {
 
     implementation(libs.core.ktx)
     implementation(libs.androidx.navigation.testing)
+
+
+    // Core dependencies
+    androidTestImplementation ("androidx.test:runner:1.6.2")
+    androidTestImplementation ("androidx.test:rules:1.6.1")
+    androidTestImplementation ("androidx.test.ext:junit:1.2.1")
+
     // Tests
+    androidTestImplementation ("io.mockk:mockk-android:1.13.4")
     androidTestImplementation ("org.mockito:mockito-android:4.0.0")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.6.1")
     testImplementation ("org.mockito:mockito-inline:5.2.0")
