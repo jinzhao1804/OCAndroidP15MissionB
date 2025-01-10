@@ -28,6 +28,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,17 @@ fun UserProfileScreen(context: Context, viewModel: UserProfileViewModel = viewMo
     val userEmail by viewModel.userEmail.collectAsState()
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val avatarImage = painterResource(id = R.drawable.profile1)
+    val isSignedOut by viewModel.isSignedOut.collectAsState()
+
+    LaunchedEffect(isSignedOut) {
+        if (isSignedOut) {
+            navController.navigate("login") {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     var hasNotificationPermission by remember {
         mutableStateOf(
@@ -109,8 +121,8 @@ fun UserProfileScreen(context: Context, viewModel: UserProfileViewModel = viewMo
             Spacer(modifier = Modifier.height(16.dp))
 
             // Logout Button
-            LogoutButton(onClick = { viewModel.signOut(context) },
-                navController)
+            LogoutButton(onClick = { viewModel.signOut(context) })
+
         }
     }
 }
@@ -164,20 +176,10 @@ fun NotificationsSwitch(
 }
 
 @Composable
-fun LogoutButton(
-    onClick: () -> Unit, // Handles the logout logic
-    navController: NavController // Handles navigation
-) {
+fun LogoutButton(onClick: () -> Unit) {
     Button(onClick = {
         Log.d("LogoutButton", "Logout button clicked")
         onClick() // Perform logout
-        Log.d("LogoutButton", "Navigating to login screen")
-        navController.navigate("login") {
-            // Clear the back stack up to and including the start destination
-            popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = true
-            }
-        }
     }) {
         Text(text = "Logout")
     }

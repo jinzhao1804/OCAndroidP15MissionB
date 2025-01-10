@@ -28,6 +28,10 @@ class UserProfileViewModel : ViewModel() {
     private val _notificationsEnabled = MutableStateFlow(true)
     val notificationsEnabled: StateFlow<Boolean> get() = _notificationsEnabled
 
+
+    private val _isSignedOut = MutableStateFlow(false)
+    val isSignedOut: StateFlow<Boolean> get() = _isSignedOut
+
     init {
         loadUserProfile()
     }
@@ -85,9 +89,9 @@ class UserProfileViewModel : ViewModel() {
 
     fun signOut(context: Context) {
         AuthUI.getInstance()
-            .signOut(context) // Pass context for sign-out
+            .signOut(context)
             .addOnCompleteListener {
-                // Show sign-out confirmation toast
+                _isSignedOut.value = true
                 Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
             }
     }

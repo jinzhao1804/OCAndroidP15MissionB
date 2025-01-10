@@ -12,7 +12,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
@@ -45,6 +47,7 @@ fun CreateEventScreen(
     val context = LocalContext.current
     val imageUri by viewModel.imageUri.observeAsState()
     val eventSaved by viewModel.eventSaved.collectAsState()
+    val cornerRadius = 8.dp
 
     LaunchedEffect(eventSaved) {
         if (eventSaved) {
@@ -216,14 +219,26 @@ fun CreateEventScreen(
                         )
                     }
 
-                    Button(onClick = {
-                        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        cameraLauncher.launch(takePictureIntent)
-                    }){
+                    Button(
+                        onClick = {
+                            // Create an intent to launch the camera
+                            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            cameraLauncher.launch(takePictureIntent)
+                        },
+                        modifier = Modifier
+                            .width(52.dp)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = app_white // Ensure the button background is white
+                        )
+                    ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.camera),
+                            painter = painterResource(id = R.drawable.camera), // Replace with your camera icon resource
                             contentDescription = "Take Picture",
-                            tint = dark
+                            tint = dark,
+                            modifier = Modifier.fillMaxSize() // Make the icon fill the button
+
                         )
                     }
 
@@ -233,11 +248,19 @@ fun CreateEventScreen(
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
                         galleryLauncher.launch(Intent.createChooser(intent, "Select Image"))
-                    }){
+                    },
+                        modifier = Modifier
+                            .width(52.dp)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
+
+                    ){
                         Icon(
                             painter = painterResource(id = R.drawable.file),
                             contentDescription = "Select Image from Gallery",
-                            tint = app_white
+                            tint = app_white,
+                            modifier = Modifier.fillMaxSize() // Make the icon fill the button
+
                         )
 
 
@@ -253,6 +276,7 @@ fun CreateEventScreen(
                     .align(Alignment.BottomCenter)
                     .padding(32.dp)
                     .fillMaxWidth(),
+                shape = RoundedCornerShape(cornerRadius), // Apply rounded corners
                 colors = ButtonDefaults.buttonColors(containerColor = red)
             ) {
                 Text("Validate")
