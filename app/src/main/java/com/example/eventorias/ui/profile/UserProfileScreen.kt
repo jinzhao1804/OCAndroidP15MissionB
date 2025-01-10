@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -164,6 +165,7 @@ fun ProfileTextField(label: String, value: String) {
         )
     )
 }
+
 @Composable
 fun NotificationsSwitch(
     notificationsEnabled: Boolean,
@@ -171,7 +173,8 @@ fun NotificationsSwitch(
 ) {
     Switch(
         checked = notificationsEnabled,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+        modifier = Modifier.testTag("NotificationsSwitch") // Add a test tag
     )
 }
 

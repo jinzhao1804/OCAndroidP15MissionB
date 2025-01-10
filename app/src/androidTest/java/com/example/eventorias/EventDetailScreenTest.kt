@@ -4,7 +4,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.eventorias.data.Event
 import com.example.eventorias.ui.detail.EventDescription
 import com.example.eventorias.ui.detail.EventDetailHeader
 import com.example.eventorias.ui.detail.EventImage
