@@ -41,6 +41,8 @@ android {
         unitTests.all {
             // Configure JVM arguments for unit tests
             it.jvmArgs = listOf("-Dnet.bytebuddy.experimental=true")
+            it.jvmArgs = listOf("-XX:+EnableDynamicAgentLoading")
+
         }
     }
 
@@ -84,7 +86,9 @@ android {
 dependencies {
 
 
+    implementation(libs.core.ktx)
     // Tests
+    testImplementation ("org.mockito:mockito-inline:5.2.0")
     implementation ("net.bytebuddy:byte-buddy:1.14.9")
     testImplementation ("org.slf4j:slf4j-simple:2.0.6")
     testImplementation ("io.mockk:mockk:1.13.4")

@@ -107,7 +107,8 @@ class MainActivity : ComponentActivity() {
                                 composable("profile") {
                                     UserProfileScreen(
                                         context = LocalContext.current,
-                                        viewModel = UserProfileViewModel(),
+                                        viewModel = UserProfileViewModel(
+                                        ),
                                         navController = navController
                                     )
                                 }

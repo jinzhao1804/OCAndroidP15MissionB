@@ -15,9 +15,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
+class LoginViewModel (
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+): ViewModel() {
+
 
     // State to track the current user
     private val _user = MutableStateFlow<FirebaseUser?>(null)
@@ -32,23 +34,25 @@ class LoginViewModel : ViewModel() {
     }
 
     // Check if the user is already logged in
-    private fun checkCurrentUser() {
+    fun checkCurrentUser() {
         _user.value = auth.currentUser
     }
 
-    // Handle sign-in result
     fun handleSignInResult(resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             _user.value = auth.currentUser
-            getNewFCMToken()
+            //getNewFCMToken()
         } else {
             val response = IdpResponse.fromResultIntent(data)
+            println("Response error: ${response?.error}")
+            println("Response error message: ${response?.error?.message}")
             _errorMessage.value = response?.error?.message ?: "Sign-in failed"
+            println("Updated error message: ${_errorMessage.value}")
         }
     }
 
     // Get a new FCM token and save it to Firestore
-    private fun getNewFCMToken() {
+    fun getNewFCMToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val newToken = task.result
@@ -61,7 +65,7 @@ class LoginViewModel : ViewModel() {
     }
 
     // Save the FCM token to Firestore
-    private fun saveTokenToFirestore(token: String) {
+    fun saveTokenToFirestore(token: String) {
         val userId = auth.currentUser?.uid ?: return
         val userRef = firestore.collection("users").document(userId)
 

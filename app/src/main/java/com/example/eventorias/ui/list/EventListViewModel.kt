@@ -18,13 +18,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class EventListViewModel : ViewModel() {
+class EventListViewModel (
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+): ViewModel() {
     // Use a single MutableStateFlow to manage all state
-    private val _state = MutableStateFlow(EventListState())
+    val _state = MutableStateFlow(EventListState())
     val state: StateFlow<EventListState> = _state.asStateFlow()
-
-
-    private val firestore = FirebaseFirestore.getInstance()
 
     init {
         fetchEvents()
@@ -104,7 +104,7 @@ class EventListViewModel : ViewModel() {
         return sortedEvents
     }
 
-    private fun parseDate(dateString: String): Date? {
+    fun parseDate(dateString: String): Date? {
         val dateFormats = arrayOf(
             SimpleDateFormat("M/d/yyyy", Locale.getDefault()),
             SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())

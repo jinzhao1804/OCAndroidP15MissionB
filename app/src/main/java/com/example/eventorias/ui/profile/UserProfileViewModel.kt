@@ -14,9 +14,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserProfileViewModel : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
+class UserProfileViewModel(
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val authUI: AuthUI = AuthUI.getInstance()
+
+) : ViewModel() {
+
 
     // Use MutableStateFlow for state management
     private val _userName = MutableStateFlow("John Doe")
@@ -25,7 +29,7 @@ class UserProfileViewModel : ViewModel() {
     private val _userEmail = MutableStateFlow("john.doe@example.com")
     val userEmail: StateFlow<String> get() = _userEmail
 
-    private val _notificationsEnabled = MutableStateFlow(true)
+    private val _notificationsEnabled = MutableStateFlow(false)
     val notificationsEnabled: StateFlow<Boolean> get() = _notificationsEnabled
 
 
@@ -36,7 +40,7 @@ class UserProfileViewModel : ViewModel() {
         loadUserProfile()
     }
 
-    private fun loadUserProfile() {
+    fun loadUserProfile() {
         auth.currentUser?.let { user ->
             _userName.value = user.displayName ?: "John Doe"
             _userEmail.value = user.email ?: "john.doe@example.com"
@@ -47,15 +51,21 @@ class UserProfileViewModel : ViewModel() {
                 if (task.isSuccessful) {
                     val document = task.result
                     if (document != null && document.exists()) {
-                        _notificationsEnabled.value = document.getBoolean("receive_notifications") ?: true
+                        _notificationsEnabled.value = document.getBoolean("receive_notifications") ?: false
                     } else {
                         // Create new user document if none exists
-                        val newUser = User(receive_notifications = true)
+                        val newUser = User(receive_notifications = false)
                         userDocRef.set(newUser).addOnSuccessListener {
-                            _notificationsEnabled.value = newUser.receive_notifications
+                            //_notificationsEnabled.value = newUser.receive_notifications
+                            _notificationsEnabled.value = false // Default value on failure
+
                         }.addOnFailureListener { e ->
+                            _notificationsEnabled.value = false // Default value on failure
+
                             Log.e("UserProfileViewModel", "Error creating user document", e)
                         }
+                        _notificationsEnabled.value = false // Default value on failure
+
                     }
                 } else {
                     Log.e("UserProfileViewModel", "Error fetching user data", task.exception)
@@ -87,12 +97,9 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
+
     fun signOut(context: Context) {
-        AuthUI.getInstance()
-            .signOut(context)
-            .addOnCompleteListener {
-                _isSignedOut.value = true
-                Toast.makeText(context, "Signed out", Toast.LENGTH_SHORT).show()
-            }
+        authUI.signOut(context)
+        _isSignedOut.value = true
     }
 }
