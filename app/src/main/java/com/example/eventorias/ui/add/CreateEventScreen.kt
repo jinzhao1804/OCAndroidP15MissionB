@@ -258,33 +258,27 @@ fun ImageSelectionButtons(
     ) {
         Button(
             onClick = onCameraClick,
-            modifier = Modifier
-                .width(52.dp)
-                .height(52.dp),
+            modifier = Modifier,
             shape = RoundedCornerShape(cornerRadius), // Use the passed cornerRadius
             colors = ButtonDefaults.buttonColors(containerColor = app_white)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.camera),
                 contentDescription = "Take Picture",
-                tint = dark,
-                modifier = Modifier.fillMaxSize()
+                tint = dark
             )
         }
 
         Button(
             onClick = onGalleryClick,
-            modifier = Modifier
-                .width(52.dp)
-                .height(52.dp),
+            modifier = Modifier,
             shape = RoundedCornerShape(cornerRadius), // Use the passed cornerRadius
             colors = ButtonDefaults.buttonColors(containerColor = red) // Add a color for consistency
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.file),
                 contentDescription = "Select Image from Gallery",
-                tint = app_white,
-                modifier = Modifier.fillMaxSize()
+                tint = app_white
             )
         }
     }
