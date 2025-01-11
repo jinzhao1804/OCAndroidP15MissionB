@@ -1,13 +1,23 @@
+import com.android.build.gradle.BaseExtension
 
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+    jacoco
 }
 
 
 android {
+    signingConfigs {
+        create("config") {
+            storeFile = file("C:\\Users\\jinzh\\android keystore\\keystore.jks")
+            storePassword = "88471804Me!"
+            keyAlias = "myocp16keystore"
+            keyPassword = "88471804Me!"
+        }
+    }
     namespace = "com.example.eventorias"
     compileSdk = 35
 
@@ -27,6 +37,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig =  signingConfigs.getByName("config")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -68,6 +79,9 @@ android {
     }
     buildTypes {
         debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
+
             buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
             // etc.
         }
@@ -84,6 +98,7 @@ android {
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("config")
 
             proguardFiles(
                 // Includes the default ProGuard rules files that are packaged with
@@ -108,6 +123,7 @@ android {
         }
     }
 }
+
 
 
 
@@ -194,4 +210,47 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+
+jacoco {
+    toolVersion = "0.8.12"
+    reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
+}
+
+val exclusions = listOf(
+    "**/R.class",
+    "**/R\$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "**/*Test*.*"
+)
+
+tasks.withType(Test::class) {
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
+}
+
+val androidExtension = extensions.getByType<BaseExtension>()
+
+val jacocoTestReport by tasks.registering(JacocoReport::class) {
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports"
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val debugTree = fileTree("${buildDir}/tmp/kotlin-classes/debug")
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom(files(mainSrc))
+    executionData.setFrom(fileTree(buildDir) {
+        include("**/*.exec", "**/*.ec")
+    })
 }
