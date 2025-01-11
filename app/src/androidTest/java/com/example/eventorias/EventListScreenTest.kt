@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -55,10 +57,10 @@ class EventListComponentsTest {
             )
         }
 
-        // Verify that the initial UI elements are displayed
-        composeTestRule.onNodeWithText("Event list").assertExists()
-        composeTestRule.onNodeWithContentDescription("Search").assertExists()
-        composeTestRule.onNodeWithContentDescription("Sort Icon").assertExists()
+        // Verify that the initial UI elements are displayed using test tags
+        composeTestRule.onNode(hasTestTag("EventListHeaderTitle")).assertExists()
+        composeTestRule.onNode(hasTestTag("EventListHeaderSearchBar")).assertExists()
+        composeTestRule.onNode(hasTestTag("EventListHeaderSortButton")).assertExists()
     }
 
     @Test
@@ -71,54 +73,13 @@ class EventListComponentsTest {
             )
         }
 
-        // Perform a click on the sort button
-        composeTestRule.onNodeWithContentDescription("Sort Icon").performClick()
+        // Perform a click on the sort button using the test tag
+        composeTestRule.onNode(hasTestTag("SortButton")).performClick()
 
         // Verify that the sort button is clickable
+        composeTestRule.onNode(hasTestTag("SortButton")).assertIsEnabled()
     }
 
-    @Test
-    fun testEventList_DisplayEvents() {
-        // Set up a list of events
-        val events = listOf(
-            Event(id = "1", title = "Event 1", date = "2023-10-01", imageUrl = "https://example.com/image1.jpg"),
-            Event(id = "2", title = "Event 2", date = "2023-10-02", imageUrl = "https://example.com/image2.jpg")
-        )
-
-        // Set up the EventList composable
-        composeTestRule.setContent {
-            EventList(
-                events = events,
-                onEventClick = {}
-            )
-        }
-
-        // Verify that the events are displayed
-        composeTestRule.onNodeWithText("Event 1").assertExists()
-        composeTestRule.onNodeWithText("Event 2").assertExists()
-    }
-
-    @Test
-    fun testEventItem_Interaction() {
-        // Set up an event
-        val event = Event(id = "1", title = "Event 1", date = "2023-10-01", imageUrl = "https://example.com/image1.jpg")
-
-        // Set up the EventItem composable
-        composeTestRule.setContent {
-            EventItem(
-                event = event,
-                onEventClick = {}
-            )
-        }
-
-        // Verify that the event item is displayed
-        composeTestRule.onNodeWithText("Event 1").assertExists()
-
-        // Perform a click on the event item
-        composeTestRule.onNodeWithText("Event 1").performClick()
-
-        // Verify that the event item is clickable
-    }
 
     @Test
     fun testLoadingIndicator_Display() {

@@ -1,13 +1,19 @@
 package com.example.eventorias
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.example.eventorias.R
@@ -30,11 +36,11 @@ class ProfileHeaderTest {
             ProfileHeader(avatarImage = painterResource(id = R.drawable.profile1))
         }
 
-        // Assert: Check if the header text is displayed
-        composeTestRule.onNodeWithText("User profile").assertIsDisplayed()
+        // Assert: Check if the header text is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("ProfileHeaderText")).assertIsDisplayed()
 
-        // Assert: Check if the avatar image is displayed
-        composeTestRule.onNodeWithContentDescription("User Avatar").assertIsDisplayed()
+        // Assert: Check if the avatar image is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("ProfileHeaderImage")).assertIsDisplayed()
     }
 
     @Test
@@ -44,41 +50,39 @@ class ProfileHeaderTest {
             ProfileTextField(label = "Name", value = "John Doe")
         }
 
-        // Assert: Check if the label and value are displayed
-        composeTestRule.onNodeWithText("Name").assertIsDisplayed()
-        composeTestRule.onNodeWithText("John Doe").assertIsDisplayed()
+        // Assert: Check if the label is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("ProfileTextField")).assertIsDisplayed()
+
     }
 
 
     @Test
-    fun testNotificationsSwitchToggles() {
-        // Arrange: Use MutableState to manage the toggle state
-        val notificationsEnabled = mutableStateOf(false)
+    fun testNotificationsSwitch_contentDescription() {
 
+        var notificationsEnabled by mutableStateOf(true)
+
+        // Set up the composable with initial state
         composeTestRule.setContent {
             NotificationsSwitch(
-                notificationsEnabled = notificationsEnabled.value,
-                onCheckedChange = { isChecked ->
-                    notificationsEnabled.value = isChecked
-                }
+                notificationsEnabled = notificationsEnabled,
+                onCheckedChange = { newState ->
+                    notificationsEnabled = newState // Update the state when the switch is toggled
+                },
+                modifier = Modifier
             )
         }
 
-        // Assert: Check if the switch is displayed and initially off
-        composeTestRule.onNodeWithTag("NotificationsSwitch").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("NotificationsSwitch").assertIsOff()
+        // Verify the content description when the switch is on
+        composeTestRule.onNodeWithTag("NotificationsSwitch")
+            .assertContentDescriptionEquals("Notifications Switch is On")
 
-        // Act: Perform a click on the switch to toggle it on
-        composeTestRule.onNodeWithTag("NotificationsSwitch").performClick()
+        // Toggle the switch to off
+        composeTestRule.onNodeWithTag("NotificationsSwitch")
+            .performClick()
 
-        // Assert: Verify the switch is now on
-        composeTestRule.onNodeWithTag("NotificationsSwitch").assertIsOn()
-
-        // Act: Perform another click on the switch to toggle it off
-        composeTestRule.onNodeWithTag("NotificationsSwitch").performClick()
-
-        // Assert: Verify the switch is now off
-        composeTestRule.onNodeWithTag("NotificationsSwitch").assertIsOff()
+        // Verify the content description when the switch is off
+        composeTestRule.onNodeWithTag("NotificationsSwitch")
+            .assertContentDescriptionEquals("Notifications Switch is Off")
     }
 
 

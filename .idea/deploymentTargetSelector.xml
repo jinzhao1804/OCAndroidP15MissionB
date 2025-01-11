@@ -5,19 +5,16 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventDetailScreenTest (1)">
+      <SelectionState runConfigName="EventDetailUITest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="EventDetailsInstrumentedTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EventDetailUITest">
+      <SelectionState runConfigName="EventListComponentsTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ProfileHeaderTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testNotificationsSwitchToggles()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

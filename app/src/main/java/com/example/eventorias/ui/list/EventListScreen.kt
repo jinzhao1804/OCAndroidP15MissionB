@@ -294,20 +294,23 @@ fun EventListHeader(
         Text(
             text = "Event list",
             style = MaterialTheme.typography.titleMedium,
-            color = Color.White
+            color = Color.White,
+            modifier = Modifier.testTag("EventListHeaderTitle") // Add a test tag for the title
         )
         SearchBar(
             searchText = searchText,
             onSearchTextChange = onSearchTextChange,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .testTag("EventListHeaderSearchBar") // Add a test tag for the search bar
         )
         SortButton(
             isSortedDescending = isSortedDescending,
-            onClick = onSortToggle
+            onClick = onSortToggle,
+            modifier = Modifier.testTag("EventListHeaderSortButton") // Add a test tag for the sort button
         )
     }
 }
-
 
 @Composable
 fun SortButton(
@@ -325,6 +328,7 @@ fun SortButton(
     Button(
         onClick = onClick,
         modifier = modifier
+            .testTag("SortButton") // Add a test tag
             .size(48.dp) // Adjust size of the button if needed
             .clearAndSetSemantics {
                 // Set the content description for accessibility

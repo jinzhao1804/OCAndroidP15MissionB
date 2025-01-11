@@ -140,6 +140,8 @@ fun ProfileHeader(avatarImage: Painter) {
             text = "User profile",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.weight(1f)
+                .testTag("ProfileHeaderText") // Add a test tag for the text
+
         )
 
         Image(
@@ -149,6 +151,7 @@ fun ProfileHeader(avatarImage: Painter) {
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
+                .testTag("ProfileHeaderImage") // Add a test tag for the image
                 .clearAndSetSemantics {  }
         )
     }
@@ -161,6 +164,7 @@ fun ProfileTextField(label: String, value: String) {
         label = { Text(label, color = app_white) },
         enabled = false,
         modifier = Modifier.fillMaxWidth()
+            .testTag("ProfileTextField") // Add a test tag for the TextField
             .clearAndSetSemantics { contentDescription = "$label is $value" },
         colors = TextFieldDefaults.colors(
             disabledTextColor = app_white,
@@ -192,6 +196,7 @@ fun NotificationsSwitch(
             }
     )
 }
+
 @Composable
 fun LogoutButton(onClick: () -> Unit) {
     Button(onClick = {

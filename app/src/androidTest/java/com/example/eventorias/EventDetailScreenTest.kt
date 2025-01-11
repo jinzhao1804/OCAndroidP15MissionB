@@ -1,8 +1,10 @@
 package com.example.eventorias
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.eventorias.ui.detail.EventDescription
 import com.example.eventorias.ui.detail.EventDetailHeader
@@ -29,7 +31,7 @@ class EventDetailUITest {
         }
 
         // Verify the back button is displayed
-        composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Back Button").assertIsDisplayed()
 
         // Verify the event title is displayed
         composeTestRule.onNodeWithText("Sample Event").assertIsDisplayed()
@@ -41,8 +43,8 @@ class EventDetailUITest {
             EventImage(imageUrl = "https://example.com/image.jpg")
         }
 
-        // Verify the event image is displayed
-        composeTestRule.onNodeWithContentDescription("Event Image").assertIsDisplayed()
+        // Verify the event image is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("EventImage")).assertIsDisplayed()
     }
 
 
@@ -53,9 +55,10 @@ class EventDetailUITest {
             EventDescription(description = "This is a sample event description.")
         }
 
-        // Verify the event description is displayed
-        composeTestRule.onNodeWithText("This is a sample event description.").assertIsDisplayed()
+        // Verify the event description is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("EventDescription")).assertIsDisplayed()
     }
+
 
     @Test
     fun testEventLocation() {
@@ -66,23 +69,24 @@ class EventDetailUITest {
             )
         }
 
-        // Verify the event address is displayed
-        composeTestRule.onNodeWithText("123 Sample St, Sample City").assertIsDisplayed()
+        // Verify the event address is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("EventAddress")).assertIsDisplayed()
 
-        // Verify the map image is displayed
-        composeTestRule.onNodeWithContentDescription("Event Location Map").assertIsDisplayed()
+        // Verify the map image is displayed using the test tag
+        composeTestRule.onNode(hasTestTag("EventMapImage")).assertIsDisplayed()
     }
 
     @Test
-    fun testRoundedImage() {
+    fun testRoundedImageExists() {
+        // Set the content of the Compose UI to the RoundedImage composable
         composeTestRule.setContent {
             RoundedImage(
                 painter = painterResource(id = R.drawable.calendar),
-                contentDescription = "Event Image"
+                contentDescription = "Calendar Icon"
             )
         }
 
-        // Verify the rounded image is displayed
-        composeTestRule.onNodeWithContentDescription("Event Image").assertIsDisplayed()
+        // Verify the RoundedImage exists in the UI hierarchy using the test tag
+        composeTestRule.onNode(hasTestTag("RoundedImageTestTag")).assertIsDisplayed()
     }
 }

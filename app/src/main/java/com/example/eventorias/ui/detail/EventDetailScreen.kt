@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -164,7 +165,9 @@ fun EventImage(
                 contentDescription = null,
                 modifier = modifier
                     .width(364.dp)
-                    .height(354.dp),
+                    .height(354.dp)
+                    .testTag("EventImage"), // Add a test tag
+
                 contentScale = ContentScale.Crop
             )
         }
@@ -227,7 +230,9 @@ fun EventDescription(
         style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
         maxLines = 3,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier.clearAndSetSemantics {
+        modifier = modifier
+            .testTag("EventDescription") // Add a test tag
+            .clearAndSetSemantics {
             contentDescription = "Description ${description}"
         }
     )
@@ -247,7 +252,9 @@ fun EventLocation(
         BasicText(
             text = address,
             style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
-            modifier = Modifier.clearAndSetSemantics {
+            modifier = Modifier
+                .testTag("EventAddress") // Add a test tag for the address
+                .clearAndSetSemantics {
                 contentDescription = "Address ${address}"
             }
         )
@@ -260,6 +267,7 @@ fun EventLocation(
                     .height(100.dp)
                     .padding(top = 16.dp)
                     .clip(MaterialTheme.shapes.medium)
+                    .testTag("EventMapImage") // Add a test tag for the map image
                     .clearAndSetSemantics {}
                     ,
                 contentScale = ContentScale.Crop
@@ -274,6 +282,7 @@ fun RoundedImage(painter: Painter, contentDescription: String) {
         painter = painter,
         contentDescription = contentDescription,
         modifier = Modifier
+            .testTag("RoundedImageTestTag") // Add the test tag first
             .size(60.dp)
             .clip(RoundedCornerShape(50.dp))
             .clearAndSetSemantics {},
