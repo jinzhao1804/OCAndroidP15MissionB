@@ -17,6 +17,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -130,7 +133,7 @@ fun EventDetailHeader(
         IconButton(onClick = onBackPressed) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = "Back Button",
                 tint = colorResource(id = R.color.app_white)
             )
         }
@@ -158,7 +161,7 @@ fun EventImage(
         ) {
             Image(
                 painter = rememberImagePainter(url),
-                contentDescription = "Event Image",
+                contentDescription = null,
                 modifier = modifier
                     .width(364.dp)
                     .height(354.dp),
@@ -181,13 +184,16 @@ fun EventDateTime(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.calendar),
-                contentDescription = "Calendar Icon",
+                contentDescription = null,
                 tint = app_white
             )
             Spacer(modifier = Modifier.padding(8.dp))
             BasicText(
                 text = viewModel.formatDate(date),
-                style = MaterialTheme.typography.bodyMedium.copy(color = app_white)
+                style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = "Date ${viewModel.formatDate(date)}"
+                }
             )
         }
 
@@ -196,13 +202,16 @@ fun EventDateTime(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.time),
-                contentDescription = "Time Icon",
+                contentDescription = null,
                 tint = app_white
             )
             Spacer(modifier = Modifier.padding(8.dp))
             BasicText(
                 text = viewModel.formatTime(time),
-                style = MaterialTheme.typography.bodyMedium.copy(color = app_white)
+                style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = "Time ${viewModel.formatTime(time)}"
+                }
             )
         }
     }
@@ -218,7 +227,9 @@ fun EventDescription(
         style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
         maxLines = 3,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier
+        modifier = modifier.clearAndSetSemantics {
+            contentDescription = "Description ${description}"
+        }
     )
 }
 
@@ -235,7 +246,10 @@ fun EventLocation(
     ) {
         BasicText(
             text = address,
-            style = MaterialTheme.typography.bodyMedium.copy(color = app_white)
+            style = MaterialTheme.typography.bodyMedium.copy(color = app_white),
+            modifier = Modifier.clearAndSetSemantics {
+                contentDescription = "Address ${address}"
+            }
         )
         mapImageUrl?.let { url ->
             Image(
@@ -245,7 +259,9 @@ fun EventLocation(
                     .width(180.dp)
                     .height(100.dp)
                     .padding(top = 16.dp)
-                    .clip(MaterialTheme.shapes.medium),
+                    .clip(MaterialTheme.shapes.medium)
+                    .clearAndSetSemantics {}
+                    ,
                 contentScale = ContentScale.Crop
             )
         }
@@ -259,7 +275,8 @@ fun RoundedImage(painter: Painter, contentDescription: String) {
         contentDescription = contentDescription,
         modifier = Modifier
             .size(60.dp)
-            .clip(RoundedCornerShape(50.dp)),
+            .clip(RoundedCornerShape(50.dp))
+            .clearAndSetSemantics {},
         contentScale = ContentScale.Crop
     )
 }

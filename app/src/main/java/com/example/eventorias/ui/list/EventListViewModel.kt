@@ -79,11 +79,15 @@ class EventListViewModel (
 
     fun onSortToggle() {
         val isDescending = !_state.value.isSortedDescending
+
         _state.value = _state.value.copy(
             isSortedDescending = isDescending,
             filteredEvents = filterAndSortEvents(_state.value.events,
                 _state.value.searchText.text, isDescending)
         )
+
+        Log.e("EventListViewModel", "Toggling sort order. New state: isDescending = ${_state.value.isSortedDescending}")
+
     }
 
 

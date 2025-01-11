@@ -37,6 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -146,6 +149,7 @@ fun ProfileHeader(avatarImage: Painter) {
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
+                .clearAndSetSemantics {  }
         )
     }
 }
@@ -156,7 +160,8 @@ fun ProfileTextField(label: String, value: String) {
         onValueChange = {},
         label = { Text(label, color = app_white) },
         enabled = false,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .clearAndSetSemantics { contentDescription = "$label is $value" },
         colors = TextFieldDefaults.colors(
             disabledTextColor = app_white,
             disabledContainerColor = grey,
@@ -169,21 +174,32 @@ fun ProfileTextField(label: String, value: String) {
 @Composable
 fun NotificationsSwitch(
     notificationsEnabled: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    // Dynamically set the content description based on the switch state
+    val switchStateDescription = if (notificationsEnabled) "On" else "Off"
+    val contentDescription = "Notifications Switch is $switchStateDescription"
+
     Switch(
         checked = notificationsEnabled,
         onCheckedChange = onCheckedChange,
-        modifier = Modifier.testTag("NotificationsSwitch") // Add a test tag
+        modifier = modifier
+            .testTag("NotificationsSwitch") // Add a test tag for testing
+            .clearAndSetSemantics {
+                // Set the content description for accessibility
+                this.contentDescription = contentDescription
+            }
     )
 }
-
 @Composable
 fun LogoutButton(onClick: () -> Unit) {
     Button(onClick = {
         Log.d("LogoutButton", "Logout button clicked")
         onClick() // Perform logout
     }) {
-        Text(text = "Logout")
+        Text(text = "Logout",
+           // modifier = Modifier.clearAndSetSemantics { contentDescription = "Logout Button" }
+        )
     }
 }

@@ -1,10 +1,11 @@
 package com.example.eventorias.ui.list
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,7 +41,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -47,11 +48,16 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
@@ -62,70 +68,47 @@ import com.example.eventorias.data.Event
 import com.example.eventorias.ui.theme.app_white
 import com.example.eventorias.ui.theme.dark
 import com.example.eventorias.ui.theme.grey
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
 
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun EventListScreen(navController: NavController) {
     val viewModel: EventListViewModel = viewModel()
     val state by viewModel.state.collectAsState()
+    //var isSortedDescending by remember { mutableStateOf(false) }
+
 
     val isLoading = state.isLoading
     val hasError = state.hasError
     val filteredEvents = state.filteredEvents
     val searchText = state.searchText
 
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         viewModel.fetchEvents()
     }
-
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    // Navigate to the CreateEventScreen route
-                    navController.navigate("createEvent")
-                },
-                containerColor = colorResource(id = R.color.red)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Event",
-                    tint = colorResource(id = R.color.app_white)
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .background(dark)
+    ) {
+        EventListHeader(
+            searchText = searchText,
+            onSearchTextChange = { text ->
+                Log.e("EventListScreen", "Updated Text: ${text.text}")
+                Log.e("EventListScreen", "Updated Cursor Position: ${text.selection}")
+                viewModel.onSearchTextChange(text)
+            },
+            isSortedDescending = state.isSortedDescending,
+            onSortToggle = {
+                viewModel.onSortToggle()
             }
-        },
-        floatingActionButtonPosition = FabPosition.End
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(dark)
-        ) {
-            EventListHeader(
-                searchText = searchText,
-                onSearchTextChange = { text ->
-                    Log.e("EventListScreen", "Updated Text: ${text.text}")
-                    Log.e("EventListScreen", "Updated Cursor Position: ${text.selection}")
-                    viewModel.onSearchTextChange(text)
-                },
-                isSortedDescending = state.isSortedDescending,
-                onSortToggle = {
-                    viewModel.onSortToggle()
-                }
-            )
+        )
 
-            when {
-                isLoading -> LoadingIndicator()
-                hasError -> ErrorMessage(onRetry = { viewModel.fetchEvents() })
-                else -> EventList(events = filteredEvents) { event ->
-                    navController.navigate("detail/${event.id}")
-                }
+        when {
+            isLoading -> LoadingIndicator()
+            hasError -> ErrorMessage(onRetry = { viewModel.fetchEvents() })
+            else -> EventList(events = filteredEvents) { event ->
+                navController.navigate("detail/${event.id}")
             }
         }
     }
@@ -181,10 +164,22 @@ fun SearchBar(
                 .focusRequester(focusRequester) // Attach FocusRequester
                 .onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
+                }
+                .semantics {
+                    // Add accessibility properties
+                    this.contentDescription = "Search input field" // Describe the purpose of the field
+                    this.stateDescription = if (isFocused) "Focused" else "Not focused" // Describe the state
+                   // this.isTraversalGroup = true // Helps with focus traversal
                 },
             placeholder = {
                 if (isFocused) {
-                    Text("Search...")
+                    Text(
+                        text = "Search...",
+                        modifier = Modifier.semantics {
+                            // Add accessibility properties for the placeholder text
+                            this.contentDescription = "Search placeholder"
+                        }
+                    )
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -315,9 +310,26 @@ fun EventListHeader(
 
 
 @Composable
-fun SortButton(isSortedDescending: Boolean, onClick: () -> Unit) {
-    Button(onClick = onClick,
-        modifier = Modifier.size(48.dp), // Adjust size of the button if needed
+fun SortButton(
+    isSortedDescending: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Dynamic content description based on the sort state
+    val sortDescription = if (isSortedDescending) {
+        "Sorted most recent to oldest "
+    } else {
+        "Sorted oldest to most recent"
+    }
+
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .size(48.dp) // Adjust size of the button if needed
+            .clearAndSetSemantics {
+                // Set the content description for accessibility
+                contentDescription = "Sort Button, $sortDescription"
+            },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent, // Transparent background
             contentColor = MaterialTheme.colorScheme.onSurface // Ensure the icon color is visible
@@ -325,21 +337,11 @@ fun SortButton(isSortedDescending: Boolean, onClick: () -> Unit) {
         contentPadding = PaddingValues(8.dp), // Add some padding to ensure the icon is visible
         shape = CircleShape
     ) {
-        if (isSortedDescending) {
-            Icon(
-                painter = painterResource(id = R.drawable.sort), // Use painterResource for drawable
-                contentDescription = "Sort Icon",
-                tint = app_white
-
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown, // Use imageVector for Material icons
-                contentDescription = "Arrow Drop Down",
-                tint = app_white
-            )
-        }
-
+        Icon(
+            imageVector = if (isSortedDescending) Icons.Default.ArrowDropDown else Icons.Default.KeyboardArrowUp,
+            contentDescription = sortDescription, // Dynamic description for the icon
+            tint = app_white
+        )
     }
 }
 
@@ -362,54 +364,63 @@ fun EventItem(event: Event, onEventClick: (Event) -> Unit) {
             .fillMaxWidth()
             .height(112.dp)
             .padding(8.dp)
-            .clickable { onEventClick(event) }) {
+            .clickable(
+                onClick = { onEventClick(event) },
+                role = Role.Button, // Indicates that this is a button for accessibility
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current
+            )
+            .semantics(mergeDescendants = true) {
+                // Provide a custom label for the entire card
+                contentDescription = "Event: ${event.title}, Date: ${event.date}"
+            }
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween, // This ensures the last image is placed at the end
-            verticalAlignment = Alignment.CenterVertically // Aligns all items vertically in the center
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
             Spacer(modifier = Modifier.padding(8.dp))
+
             // User profile image
             Image(
                 painter = rememberImagePainter(event.imageUrl),
-                contentDescription = "User profile picture",
+                contentDescription = null, // Prevent screen reader from announcing this image
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop // Scale the image to fill the space and crop
-
+                contentScale = ContentScale.Crop
             )
 
-            val whiteTextStyle = TextStyle(color = colorResource(id = R.color.app_white)) // Use colorResource to fetch the color
+            val whiteTextStyle = TextStyle(color = colorResource(id = R.color.app_white))
 
             Column(
                 modifier = Modifier.padding(start = 16.dp)
             ) {
                 Text(
                     text = event.title,
-                    style = MaterialTheme.typography.titleSmall.merge(whiteTextStyle)
+                    style = MaterialTheme.typography.titleSmall.merge(whiteTextStyle),
+                    modifier = Modifier.clearAndSetSemantics {}
                 )
                 Text(
                     text = event.date,
-                    style = MaterialTheme.typography.bodyMedium.merge(whiteTextStyle)
+                    style = MaterialTheme.typography.bodyMedium.merge(whiteTextStyle),
+                    modifier = Modifier.clearAndSetSemantics {}
                 )
             }
+
             // Event image at the end of the row
             Image(
                 painter = rememberImagePainter(event.imageUrl),
-                contentDescription = "Event image",
+                contentDescription = null, // Prevent screen reader from announcing this image
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(180.dp)
                     .aspectRatio(1f),
-                contentScale = ContentScale.Crop // Crop the image to fill the bounds
-
-
+                contentScale = ContentScale.Crop
             )
         }
     }
 }
-

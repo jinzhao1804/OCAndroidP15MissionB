@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
-                                        contentDescription = "Add Event",
+                                        contentDescription = "Add a new Event",
                                         tint = colorResource(id = R.color.app_white)
                                     )
                                 }
