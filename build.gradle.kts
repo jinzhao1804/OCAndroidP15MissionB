@@ -8,7 +8,11 @@ plugins {
 
 sonar {
     properties {
-        property("sonar.projectKey", "myProjectKey")
-        property("sonar.host.url", "myHostUrl")
+        property("sonar.projectKey", "jinzhao1804_OCAndroidP15MissionB")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.organization", "jinzhao1804")
+        property("sonar.login", "7e4e7a96ed7f0a73481d4ab154ccfb3bb522edbb")
+        property("sonar.token", "7e4e7a96ed7f0a73481d4ab154ccfb3bb522edbb")
+
     }
 }
