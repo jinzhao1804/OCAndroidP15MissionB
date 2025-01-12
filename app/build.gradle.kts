@@ -12,7 +12,7 @@ plugins {
 android {
     signingConfigs {
         create("config") {
-            storeFile = file("C:\\Users\\jinzh\\android keystore\\keystore.jks")
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "default/path/to/keystore.jks")
             storePassword = "88471804Me!"
             keyAlias = "myocp16keystore"
             keyPassword = "88471804Me!"
