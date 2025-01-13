@@ -84,12 +84,13 @@ android {
             enableAndroidTestCoverage = true
             enableUnitTestCoverage = true
 
-            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+            buildConfigField("String", "MY_API_KEY", System.getenv("MY_API_KEY") ?: "\"${project.property("MY_API_KEY")}\"")
             // etc.
         }
         release {
 
-            buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
+            buildConfigField("String", "MY_API_KEY", System.getenv("MY_API_KEY") ?: "\"${project.property("MY_API_KEY")}\"")
+
 
         }
         getByName("release") {
