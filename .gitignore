@@ -30,3 +30,6 @@ app/src/main/java/com/example/eventorias/api/ApiKey.kt
 gradle.properties
 .gradle.properties
 
+
+/app/google-services.json
+google-services.json
