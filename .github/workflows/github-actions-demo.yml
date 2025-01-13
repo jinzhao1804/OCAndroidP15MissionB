@@ -26,5 +26,14 @@ jobs:
         uses: henriquehorbovyi/Android-CI-CD@v0.0.1-beta5
 
       - name: SonarCloud Scan
-        uses: antonioaversa/sonarcloud-github-action@v4.0.0
-
+        env:
+          MY_API_KEY: ${{ secrets.MY_API_KEY }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Token from GitHub Secrets
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}  # Project key from GitHub Secrets
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}  # Organization from GitHub Secrets
+        run: |
+          ./gradlew sonarqube \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.organization=$SONAR_ORGANIZATION \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
