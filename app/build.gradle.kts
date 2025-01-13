@@ -12,10 +12,10 @@ plugins {
 android {
     signingConfigs {
         create("config") {
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "default/path/to/keystore.jks")
-            storePassword = "88471804Me!"
-            keyAlias = "myocp16keystore"
-            keyPassword = "88471804Me!"
+            storeFile = file(project.property("KEYSTORE_FILE")!!)
+            storePassword = project.property("KEYSTORE_PASSWORD")?.toString()
+            keyAlias = project.property("KEY_ALIAS")?.toString()
+            keyPassword = project.property("KEY_PASSWORD")?.toString()
         }
     }
     namespace = "com.example.eventorias"
@@ -56,6 +56,8 @@ android {
 
         }
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -82,12 +84,13 @@ android {
             enableAndroidTestCoverage = true
             enableUnitTestCoverage = true
 
-            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
-            // etc.
+            buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
+
         }
         release {
-            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
-            // etc.
+
+            buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
+
         }
         getByName("release") {
             // Enables code shrinking, obfuscation, and optimization for only
@@ -112,7 +115,7 @@ android {
         }
     }
     defaultConfig {
-        buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+        buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
     }
     packaging {
         resources {
