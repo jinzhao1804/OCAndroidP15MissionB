@@ -22,8 +22,8 @@ jobs:
       - name: Android Github Action
         uses: vukan-markovic/Github-Android-Action@1.2
 
-      - name: Run instrumented tests
-        run: ./gradlew :app:connectedCheck  # Run instrumented tests in the 'app' module
+      - name: Android CI/CD
+        uses: henriquehorbovyi/Android-CI-CD@v0.0.1-beta5
 
       - name: SonarCloud Scan
         env:
