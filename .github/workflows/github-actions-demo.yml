@@ -28,7 +28,7 @@ jobs:
       - name: Run unit tests
         env:
           MY_API_KEY: ${{ secrets.MY_API_KEY }}
-        run: ./gradlew :app:testDebugUnitTest  # Run unit tests in the 'app' module
+        run: ./gradlew :app:testDebugUnitTest -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true assembleDebug # Run unit tests in the 'app' module
 
       - name: Run instrumented tests
         run: ./gradlew :app:connectedCheck  # Run instrumented tests in the 'app' module
