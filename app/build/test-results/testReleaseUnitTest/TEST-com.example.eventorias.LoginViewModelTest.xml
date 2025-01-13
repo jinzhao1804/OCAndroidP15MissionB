@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.eventorias.LoginViewModelTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-01-12T13:49:28" hostname="MOEW" time="0.82">
+  <properties/>
+  <testcase name="handleSignInResult with RESULT_CANCELED and null response should update default error message" classname="com.example.eventorias.LoginViewModelTest" time="0.802"/>
+  <testcase name="checkCurrentUser updates user state when user is logged in" classname="com.example.eventorias.LoginViewModelTest" time="0.005"/>
+  <testcase name="checkCurrentUser updates user state to null when user is not logged in" classname="com.example.eventorias.LoginViewModelTest" time="0.005"/>
+  <testcase name="handleSignInResult updates user state when result is RESULT_OK" classname="com.example.eventorias.LoginViewModelTest" time="0.006"/>
+  <system-out><![CDATA[Response error: null
+Response error message: null
+Updated error message: Sign-in failed
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

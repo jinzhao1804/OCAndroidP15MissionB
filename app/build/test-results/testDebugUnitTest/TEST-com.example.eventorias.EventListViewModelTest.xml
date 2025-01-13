@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.eventorias.EventListViewModelTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2025-01-12T12:20:38" hostname="MOEW" time="4.223">
+  <properties/>
+  <testcase name="parseDate should return correct date for valid formats" classname="com.example.eventorias.EventListViewModelTest" time="3.776"/>
+  <testcase name="fetchEvents should update state with events" classname="com.example.eventorias.EventListViewModelTest" time="0.371"/>
+  <testcase name="onSortToggle should reverse the order of filteredEvents" classname="com.example.eventorias.EventListViewModelTest" time="0.056"/>
+  <testcase name="onSearchTextChange should update filteredEvents" classname="com.example.eventorias.EventListViewModelTest" time="0.011"/>
+  <testcase name="parseDate should return null for invalid format" classname="com.example.eventorias.EventListViewModelTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

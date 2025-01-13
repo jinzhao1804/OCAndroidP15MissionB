@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">962756387366-5q3hh0pb2rte7fi735kldpvp1u25s3dp.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">962756387366</string>
+    <string name="google_api_key" translatable="false">AIzaSyAsT7-fLgwIVJh21yOdfSJqjmKecs7Bog0</string>
+    <string name="google_app_id" translatable="false">1:962756387366:android:5cbb18a224b797ffe33ce7</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAsT7-fLgwIVJh21yOdfSJqjmKecs7Bog0</string>
+    <string name="google_storage_bucket" translatable="false">p15eventorias.firebasestorage.app</string>
+    <string name="project_id" translatable="false">p15eventorias</string>
+</resources>

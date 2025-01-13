@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="conditional_incidents">
+
+    <incident
+        id="ScopedStorage"
+        severity="warning"
+        message="">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="4"
+            column="36"
+            startOffset="198"
+            endLine="4"
+            endColumn="76"
+            endOffset="238"/>
+        <map>
+            <entry
+                name="maxSdkVersion"
+                int="2147483647"/>
+            <entry
+                name="read"
+                boolean="true"/>
+        </map>
+    </incident>
+
+    <incident
+        id="ScopedStorage"
+        severity="warning"
+        message="">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="5"
+            column="36"
+            startOffset="279"
+            endLine="5"
+            endColumn="77"
+            endOffset="320"/>
+        <map>
+            <entry
+                name="maxSdkVersion"
+                int="2147483647"/>
+            <entry
+                name="read"
+                boolean="false"/>
+        </map>
+    </incident>
+
+    <incident
+        id="NotificationPermission"
+        severity="error"
+        message="When targeting Android 13 or higher, posting a permission requires holding the `POST_NOTIFICATIONS` permission">
+        <fix-data missing="android.permission.POST_NOTIFICATIONS"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/eventorias/MyFirebaseMessagingService.kt"
+            line="239"
+            column="9"
+            startOffset="8402"
+            endLine="239"
+            endColumn="80"
+            endOffset="8473"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 31">
+        <fix-replace
+            description="Delete tools:targetApi"
+            replacement=""
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+                startOffset="980"
+                endOffset="1000"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="19"
+            column="9"
+            startOffset="980"
+            endLine="19"
+            endColumn="29"
+            endOffset="1000"/>
+        <map>
+            <condition minGE="ffffffffc0000000"/>
+        </map>
+    </incident>
+
+    <incident
+        id="RtlHardcoded"
+        severity="warning"
+        message="Consider replacing `android:drawableLeft` with `android:drawableStart=&quot;@drawable/ic_google&quot;` to better support right-to-left layouts">
+        <fix-replace
+            description="Replace with android:drawableStart=&quot;@drawable/ic_google&quot;"
+            oldString="drawableLeft"
+            replacement="drawableStart"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/my_custom_auth_ui.xml"
+            line="25"
+            column="5"
+            startOffset="857"
+            endLine="25"
+            endColumn="25"
+            endOffset="877"/>
+        <map>
+            <entry
+                name="applies"
+                int="10"/>
+        </map>
+    </incident>
+
+    <incident
+        id="RtlHardcoded"
+        severity="warning"
+        message="Consider replacing `android:drawableLeft` with `android:drawableStart=&quot;@drawable/ic_email&quot;` to better support right-to-left layouts">
+        <fix-replace
+            description="Replace with android:drawableStart=&quot;@drawable/ic_email&quot;"
+            oldString="drawableLeft"
+            replacement="drawableStart"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/my_custom_auth_ui.xml"
+            line="44"
+            column="5"
+            startOffset="1529"
+            endLine="44"
+            endColumn="25"
+            endOffset="1549"/>
+        <map>
+            <entry
+                name="applies"
+                int="10"/>
+        </map>
+    </incident>
+
+</incidents>

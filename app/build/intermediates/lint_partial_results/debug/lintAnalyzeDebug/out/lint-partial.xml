@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="partial_results">
+    <map id="NotificationPermission">
+        <location id="class"
+            file="$GRADLE_USER_HOME/caches/8.9/transforms/0ce3a3349ca5338438555b36c1484f11/transformed/firebase-messaging-24.1.0/jars/classes.jar"/>
+        <entry
+            name="className"
+            string="com/google/firebase/messaging/DisplayNotification"/>
+        <entry
+            name="source"
+            boolean="true"/>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.eventorias.ui.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.colorPrimary"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="14"
+            column="12"
+            startOffset="590"
+            endLine="14"
+            endColumn="31"
+            endOffset="609"/>
+        <location id="R.color.material_green_50"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="10"
+            column="12"
+            startOffset="377"
+            endLine="10"
+            endColumn="36"
+            endOffset="401"/>
+        <location id="R.color.material_green_500"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="11"
+            column="12"
+            startOffset="429"
+            endLine="11"
+            endColumn="37"
+            endOffset="454"/>
+        <location id="R.color.material_green_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="12"
+            column="12"
+            startOffset="482"
+            endLine="12"
+            endColumn="37"
+            endOffset="507"/>
+        <location id="R.color.material_purple_a700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="13"
+            column="12"
+            startOffset="535"
+            endLine="13"
+            endColumn="39"
+            endOffset="562"/>
+        <location id="R.color.purple_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="3"
+            column="12"
+            startOffset="62"
+            endLine="3"
+            endColumn="29"
+            endOffset="79"/>
+        <location id="R.color.purple_500"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="4"
+            column="12"
+            startOffset="109"
+            endLine="4"
+            endColumn="29"
+            endOffset="126"/>
+        <location id="R.color.purple_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="5"
+            column="12"
+            startOffset="156"
+            endLine="5"
+            endColumn="29"
+            endOffset="173"/>
+        <location id="R.color.teal_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="6"
+            column="12"
+            startOffset="203"
+            endLine="6"
+            endColumn="27"
+            endOffset="218"/>
+        <location id="R.color.teal_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="7"
+            column="12"
+            startOffset="248"
+            endLine="7"
+            endColumn="27"
+            endOffset="263"/>
+        <location id="R.drawable.ic_launcher_background"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_launcher_background.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="170"
+            endColumn="10"
+            endOffset="5605"/>
+        <location id="R.drawable.ic_launcher_foreground"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_launcher_foreground.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="30"
+            endColumn="10"
+            endOffset="1702"/>
+        <location id="R.drawable.profile0"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/profile0.png"/>
+        <location id="R.drawable.sort"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/sort.png"/>
+        <entry
+            name="model"
+            string="color[white(U),red(U),black(U),purple_200(D),purple_500(D),purple_700(D),teal_200(D),teal_700(D),material_green_50(D),material_green_500(D),material_green_700(D),material_purple_a700(D),colorPrimary(D),colorPrimaryDark(U),colorAccent(U),dark(U),app_white(U)],drawable[calendar(U),camera(U),file(U),ic_email(U),ic_google(U),ic_launcher_background(D),ic_launcher_foreground(D),ic_launcher_foreground_1(E),list(U),logo(U),profile(U),profile0(D),profile1(U),rounded_button(U),rounded_email_button(U),sort(D),time(U)],id[GoogleButton(U),emailButton(U)],layout[my_custom_auth_ui(U)],mipmap[ic_launcher(U),ic_launcher_adaptive_back(U),ic_launcher_adaptive_fore(U)],string[app_name(U),default_notification_channel_id(U),fcm_message(U)],style[Theme_Eventorias(U),Theme_AppCompat_Light_DarkActionBar(R),FirebaseAuthCustomTheme(U),FirebaseUI(R)],xml[data_extraction_rules(U),backup_rules(U)];17^18,1e^0,1f^1,24^1a^1e^15^2^1f^14^0,25^26^27,2b^f,2d^2e^1^d^e^f;;;"/>
+    </map>
+
+</incidents>

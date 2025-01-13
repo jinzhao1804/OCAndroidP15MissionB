@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.eventorias.UserProfileViewModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-01-12T13:49:28" hostname="MOEW" time="0.455">
+  <properties/>
+  <testcase name="loadUserProfile should update userName and userEmail when user is logged in" classname="com.example.eventorias.UserProfileViewModelTest" time="0.405"/>
+  <testcase name="loadUserProfile should fetch notifications setting from Firestore" classname="com.example.eventorias.UserProfileViewModelTest" time="0.02"/>
+  <testcase name="signOut should set isSignedOut to true and call authUI signOut" classname="com.example.eventorias.UserProfileViewModelTest" time="0.029"/>
+  <system-out><![CDATA[Expected userName: John Doe
+Actual userName: John Doe
+Expected userEmail: john.doe@example.com
+Actual userEmail: john.doe@example.com
+Expected notificationsEnabled: false
+Actual notificationsEnabled: false
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

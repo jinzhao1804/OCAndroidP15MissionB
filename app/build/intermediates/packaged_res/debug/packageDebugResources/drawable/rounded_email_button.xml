@@ -1,0 +1,8 @@
+<!-- res/drawable/rounded_email_button.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background color -->
+    <solid android:color="@color/red" /> <!-- For the Email button -->
+
+    <!-- Rounded corners -->
+    <corners android:radius="8dp" /> <!-- Adjust radius as needed -->
+</shape>

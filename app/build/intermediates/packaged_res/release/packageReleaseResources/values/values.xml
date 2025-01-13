@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_white">#E6E0E9</color>
+    <color name="black">#FF000000</color>
+    <color name="colorAccent">#FF6200EE</color>
+    <color name="colorPrimary">#FFBB86FC</color>
+    <color name="colorPrimaryDark">#FF6200EE</color>
+    <color name="dark">#1D1B20</color>
+    <color name="material_green_50">#E8F5E9</color>
+    <color name="material_green_500">#4CAF50</color>
+    <color name="material_green_700">#388E3C</color>
+    <color name="material_purple_a700">#AA00FF</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="red">#D0021B</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">eventorias</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_web_client_id" translatable="false">962756387366-5q3hh0pb2rte7fi735kldpvp1u25s3dp.apps.googleusercontent.com</string>
+    <string name="fcm_message">FCM Message</string>
+    <string name="gcm_defaultSenderId" translatable="false">962756387366</string>
+    <string name="google_api_key" translatable="false">AIzaSyAsT7-fLgwIVJh21yOdfSJqjmKecs7Bog0</string>
+    <string name="google_app_id" translatable="false">1:962756387366:android:5cbb18a224b797ffe33ce7</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAsT7-fLgwIVJh21yOdfSJqjmKecs7Bog0</string>
+    <string name="google_storage_bucket" translatable="false">p15eventorias.firebasestorage.app</string>
+    <string name="project_id" translatable="false">p15eventorias</string>
+    <style name="FirebaseAuthCustomTheme" parent="FirebaseUI">
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:windowBackground">@color/dark</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+    <style name="Theme.Eventorias" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/dark</item>
+        <item name="android:navigationBarColor">@color/dark</item>
+    </style>
+</resources>

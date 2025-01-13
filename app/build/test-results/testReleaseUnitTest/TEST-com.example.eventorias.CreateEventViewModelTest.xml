@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.example.eventorias.CreateEventViewModelTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-01-12T13:49:21" hostname="MOEW" time="2.085">
+  <properties/>
+  <testcase name="updateDate should update the date in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="2.049"/>
+  <testcase name="eventSaved should be false initially" classname="com.example.eventorias.CreateEventViewModelTest" time="0.006"/>
+  <testcase name="updateTitle should update the title in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="0.005"/>
+  <testcase name="updateDescription should update the description in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="0.002"/>
+  <testcase name="handleImageUri should update the imageUri in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="0.005"/>
+  <testcase name="updateTime should update the time in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="0.003"/>
+  <testcase name="updateAddress should update the address in the state" classname="com.example.eventorias.CreateEventViewModelTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

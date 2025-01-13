@@ -1,0 +1,142 @@
+[
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_rounded_email_button.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/rounded_email_button.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_ic_email.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/ic_email.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_profile.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/profile.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_rounded_button.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/rounded_button.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_sort.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/sort.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_profile1.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/profile1.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-mdpi_ic_launcher_adaptive_fore.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-mdpi/ic_launcher_adaptive_fore.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_file.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/file.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_camera.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/camera.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-hdpi_ic_launcher_adaptive_fore.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-hdpi/ic_launcher_adaptive_fore.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xhdpi_ic_launcher_adaptive_fore.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xhdpi/ic_launcher_adaptive_fore.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxxhdpi_ic_launcher_adaptive_fore.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxxhdpi/ic_launcher_adaptive_fore.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xhdpi_ic_launcher_adaptive_back.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xhdpi/ic_launcher_adaptive_back.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxxhdpi_ic_launcher_adaptive_back.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxxhdpi/ic_launcher_adaptive_back.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-hdpi_ic_launcher_adaptive_back.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-hdpi/ic_launcher_adaptive_back.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_calendar.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/calendar.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_list.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/list.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/xml_backup_rules.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_logo.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/logo.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-mdpi_ic_launcher_adaptive_back.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-mdpi/ic_launcher_adaptive_back.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/layout_my_custom_auth_ui.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/layout/my_custom_auth_ui.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_time.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/time.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_ic_google.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/ic_google.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxhdpi_ic_launcher_adaptive_fore.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxhdpi/ic_launcher_adaptive_fore.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/mipmap-xxhdpi_ic_launcher_adaptive_back.png.flat",
+        "source": "com.example.eventorias.app-main-7:/mipmap-xxhdpi/ic_launcher_adaptive_back.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/drawable_profile0.png.flat",
+        "source": "com.example.eventorias.app-main-7:/drawable/profile0.png"
+    },
+    {
+        "merged": "com.example.eventorias.app-debug-5:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.eventorias.app-main-7:/xml/data_extraction_rules.xml"
+    }
+]
