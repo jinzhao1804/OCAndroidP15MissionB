@@ -29,7 +29,7 @@ jobs:
         env:
           KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}  # Pass the keystore path from GitHub Secrets
           MY_API_KEY: ${{ secrets.MY_API_KEY }}
-        run: ./gradlew build
+        run: ./gradlew build -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true assembleDebug
 
       - name: Run unit tests
         run: ./gradlew :app:testDebugUnitTest  # Run unit tests in the 'app' module
