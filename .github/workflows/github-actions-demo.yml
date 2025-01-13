@@ -28,6 +28,7 @@ jobs:
       - name: Build with Gradle
         env:
           KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}  # Pass the keystore path from GitHub Secrets
+          MY_API_KEY: ${{ secrets.MY_API_KEY }}
         run: ./gradlew build
 
       - name: Run unit tests
