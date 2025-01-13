@@ -1,4 +1,6 @@
 import com.android.build.gradle.BaseExtension
+import java.net.URI
+import java.nio.file.Paths
 
 
 plugins {
@@ -12,7 +14,10 @@ plugins {
 android {
     signingConfigs {
         create("config") {
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "C:\\OCDec2024\\p15\\missionBver3\\android_keystore\\keystore.jks")
+
+            val filePath = "C:\\OCDec2024\\p15\\missionBver3\\android_keystore\\keystore.jks"
+            val uri: URI = Paths.get(filePath).toUri()
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: uri)
             storePassword = "123456789"
             keyAlias = "myocp16keystore"
             keyPassword = "123456789"
