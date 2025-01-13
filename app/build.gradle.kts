@@ -116,7 +116,7 @@ android {
         }
     }
     defaultConfig {
-        buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
+        buildConfigField("String", "MY_API_KEY", System.getenv("MY_API_KEY") ?: "\"${project.property("MY_API_KEY")}\"")
     }
     packaging {
         resources {
