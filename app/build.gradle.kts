@@ -90,7 +90,7 @@ android {
             enableUnitTestCoverage = true
 
             buildConfigField("String", "MY_API_KEY", System.getenv("MY_API_KEY") ?: "\"${project.property("MY_API_KEY")}\"")
-            // etc.
+
         }
         release {
 
