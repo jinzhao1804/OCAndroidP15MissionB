@@ -25,22 +25,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run unit tests
-        env:
-          MY_API_KEY: ${{ secrets.MY_API_KEY }}
-        run: ./gradlew :app:testDebugUnitTest -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true assembleDebug # Run unit tests in the 'app' module
+      - name: Android Github Action
+        uses: vukan-markovic/Github-Android-Action@1.2
 
-      - name: Run instrumented tests
-        run: ./gradlew :app:connectedCheck  # Run instrumented tests in the 'app' module
 
-      - name: SonarCloud Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Token from GitHub Secrets
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}  # Project key from GitHub Secrets
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}  # Organization from GitHub Secrets
-        run: |
-          ./gradlew sonarqube \
-            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-            -Dsonar.organization=$SONAR_ORGANIZATION \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN
