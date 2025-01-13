@@ -12,10 +12,10 @@ plugins {
 android {
     signingConfigs {
         create("config") {
-            storeFile = file(project.property("KEYSTORE_FILE")!!)
-            storePassword = project.property("KEYSTORE_PASSWORD")?.toString()
-            keyAlias = project.property("KEY_ALIAS")?.toString()
-            keyPassword = project.property("KEY_PASSWORD")?.toString()
+            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "C:\\Users\\jinzh\\android_keystore\\keystore.jks")
+            storePassword = "123456789"
+            keyAlias = "myocp16keystore"
+            keyPassword = "123456789"
         }
     }
     namespace = "com.example.eventorias"
@@ -84,8 +84,8 @@ android {
             enableAndroidTestCoverage = true
             enableUnitTestCoverage = true
 
-            buildConfigField("String", "MY_API_KEY", "\"${project.property("MY_API_KEY")}\"")
-
+            buildConfigField ("String", "MY_API_KEY", "\"${"AIzaSyADGzuKfQsJillaL6iPE0bnk1LkJjrTDJI"}\"")
+            // etc.
         }
         release {
 
