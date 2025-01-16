@@ -22,6 +22,9 @@ jobs:
       - name: Android Github Action
         uses: vukan-markovic/Github-Android-Action@1.2
 
+      - name: Android Tests Reporter
+        uses: FlickerSoul/android-test-report-actions@v1.3.1
+
       - name: Android CI/CD
         uses: henriquehorbovyi/Android-CI-CD@v0.0.1-beta5
 
